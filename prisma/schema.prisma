@@ -1,0 +1,187 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Get a free hosted Postgres database in seconds: `npx create-db`
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String   @id @default(cuid())
+  username  String   @unique
+  password  String
+  role      String   @default("STAFF") // ADMIN, MANAGER, STAFF
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  transactions InventoryTransaction[]
+  posCreated   PurchaseOrder[]        @relation("PoCreator")
+  posApproved  PurchaseOrder[]        @relation("PoApprover")
+}
+
+model Supplier {
+  id        String   @id @default(cuid())
+  name      String
+  contact   String?
+  address   String?
+  taxId     String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  pos       PurchaseOrder[]
+}
+
+model Product {
+  id            String   @id @default(cuid())
+  sku           String   @unique
+  name          String
+  category      String?
+  brand         String?
+  customAttributes String? // JSON string
+  description   String?
+  grade         String?
+  size          String?
+  length        Float?
+  unit          String   @default("pcs")
+  weightPerUnit Float?   // น้ำหนักต่อหน่วย (kg)
+  currentStock  Float    @default(0)
+  minStockLevel Float    @default(10)
+  price         Float    @default(0)
+  barcode       String?  @unique
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  transactions  InventoryTransaction[]
+  poItems       PurchaseOrderItem[]
+  lots          Lot[]
+  quotationItems QuotationItem[]
+  soItems       SalesOrderItem[]
+}
+
+model Lot {
+  id             String   @id @default(cuid())
+  batchNumber    String   @unique
+  mfgDate        DateTime?
+  expDate        DateTime?
+  certNumber     String?  // มอก. หรือใบรับรอง
+  location       String?  // โซน/ตำแหน่งจัดเก็บ
+  initialQty     Float
+  currentQty     Float
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  productId      String
+  product        Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  
+  poId           String?
+  po             PurchaseOrder? @relation(fields: [poId], references: [id])
+
+  transactions   InventoryTransaction[]
+}
+
+model InventoryTransaction {
+  id        String   @id @default(cuid())
+  type      String   // IN, OUT, ADJUST
+  quantity  Float
+  reference String?  // เช่น PO-1001, SALE-2001
+  createdAt DateTime @default(now())
+
+  productId String
+  product   Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  
+  lotId     String?
+  lot       Lot?     @relation(fields: [lotId], references: [id])
+
+  userId    String?
+  user      User?    @relation(fields: [userId], references: [id])
+}
+
+model PurchaseOrder {
+  id         String   @id @default(cuid())
+  poNumber   String   @unique
+  status     String   @default("PENDING") // PENDING, APPROVED, REJECTED
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  supplierId String?
+  supplier   Supplier? @relation(fields: [supplierId], references: [id])
+
+  createdById String?
+  createdBy   User?   @relation("PoCreator", fields: [createdById], references: [id])
+  
+  approvedById String?
+  approvedBy   User?   @relation("PoApprover", fields: [approvedById], references: [id])
+
+  items      PurchaseOrderItem[]
+  lots       Lot[]
+}
+
+model PurchaseOrderItem {
+  id        String   @id @default(cuid())
+  quantity  Float
+  unitPrice Float    @default(0)
+
+  poId      String
+  po        PurchaseOrder @relation(fields: [poId], references: [id], onDelete: Cascade)
+
+  productId String
+  product   Product       @relation(fields: [productId], references: [id], onDelete: Cascade)
+}
+
+model Quotation {
+  id          String   @id @default(cuid())
+  qNumber     String   @unique
+  customerName String
+  status      String   @default("DRAFT") // DRAFT, SENT, ACCEPTED, REJECTED
+  totalAmount Float    @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  items       QuotationItem[]
+  salesOrders SalesOrder[]
+}
+
+model QuotationItem {
+  id          String   @id @default(cuid())
+  quantity    Float
+  unitPrice   Float
+  
+  quotationId String
+  quotation   Quotation @relation(fields: [quotationId], references: [id], onDelete: Cascade)
+  
+  productId   String
+  product     Product   @relation(fields: [productId], references: [id])
+}
+
+model SalesOrder {
+  id          String   @id @default(cuid())
+  soNumber    String   @unique
+  customerName String
+  status      String   @default("PENDING") // PENDING, FULFILLED, CANCELLED
+  totalAmount Float    @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  quotationId String?
+  quotation   Quotation? @relation(fields: [quotationId], references: [id])
+
+  items       SalesOrderItem[]
+}
+
+model SalesOrderItem {
+  id          String   @id @default(cuid())
+  quantity    Float
+  unitPrice   Float
+  
+  soId        String
+  so          SalesOrder @relation(fields: [soId], references: [id], onDelete: Cascade)
+  
+  productId   String
+  product     Product    @relation(fields: [productId], references: [id])
+}
