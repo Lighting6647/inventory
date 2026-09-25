@@ -142,9 +142,9 @@ export default function InventoryPage() {
           <button className="btn btn-secondary" onClick={() => setIsImportOpen(true)} style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
             <span>📤</span> Import CSV
           </button>
-          <button className="btn btn-primary" style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
+          <a href="/inbound" className="btn btn-primary" style={{ display: 'flex', gap: '0.5rem', alignItems: 'center', textDecoration: 'none' }}>
             <span>+</span> Add Product
-          </button>
+          </a>
         </div>
       </header>
 
