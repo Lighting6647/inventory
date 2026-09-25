@@ -21,26 +21,6 @@
   --radius: 12px;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0f172a;
-    --foreground: #f8fafc;
-    --card: rgba(30, 41, 59, 0.7);
-    --card-foreground: #f8fafc;
-    --primary: #6366f1;
-    --primary-foreground: #ffffff;
-    --secondary: #334155;
-    --secondary-foreground: #f1f5f9;
-    --accent: #818cf8;
-    --accent-foreground: #ffffff;
-    --border: rgba(255, 255, 255, 0.1);
-    --sidebar: rgba(15, 23, 42, 0.6);
-    --danger: #f87171;
-    --success: #34d399;
-    --warning: #fbbf24;
-  }
-}
-
 * {
   box-sizing: border-box;
   margin: 0;
@@ -48,14 +28,11 @@
 }
 
 body {
-  background-color: var(--background);
-  color: var(--foreground);
-  font-family: var(--font-sans);
+  background-color: #ecf0f5;
+  color: #333;
+  font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  background-image: radial-gradient(circle at 100% 0%, rgba(99, 102, 241, 0.05) 0%, transparent 25%),
-                    radial-gradient(circle at 0% 100%, rgba(16, 185, 129, 0.05) 0%, transparent 25%);
-  background-attachment: fixed;
 }
 
 a {
@@ -85,9 +62,9 @@ button {
 
 .page-content {
   flex: 1;
-  padding: 2.5rem;
   overflow-y: auto;
   scroll-behavior: smooth;
+  background-color: #ecf0f5;
 }
 
 /* Common UI Elements */

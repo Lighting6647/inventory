@@ -26,22 +26,35 @@ const Sidebar = () => {
   }, []);
 
   const links = [
-    { name: 'Dashboard (ภาพรวม)', path: '/', icon: '📊' },
-    { name: 'POS (ขายหน้าร้าน)', path: '/pos', icon: '🛒' },
-    { name: 'Inbound (รับของเข้า)', path: '/inbound', icon: '📥' },
-    { name: 'Inventory (คลังสินค้า)', path: '/inventory', icon: '📦' },
-    { name: 'Transactions', path: '/transactions', icon: '📋' },
-    { name: 'Purchase Orders', path: '/orders', icon: '📄' },
-    { name: 'Suppliers', path: '/suppliers', icon: '🏢' },
-    { name: 'Settings', path: '/settings', icon: '⚙️' }
+    { name: 'ภาพรวม', path: '/', icon: '🏠' },
+    { name: 'งานขายและ POS', path: '/pos', icon: '🛒' },
+    { name: 'ลูกค้า', path: '/customers', icon: '👥' },
+    { name: 'ซื้อ', path: '/inbound', icon: '📥' },
+    { name: 'ผู้จำหน่าย', path: '/suppliers', icon: '🏢' },
+    { name: 'สินค้า', path: '/inventory', icon: '📦' },
+    { name: 'ค่าใช้จ่าย', path: '/expenses', icon: '💸' },
+    { name: 'สถานที่', path: '/locations', icon: '📍' },
+    { name: 'รายงาน', path: '/reports', icon: '📊' },
+    { name: 'ผู้ใช้งาน', path: '/users', icon: '👨‍💼' },
+    { name: 'SMS', path: '/sms', icon: '✉️' },
+    { name: 'ตั้งค่า', path: '/settings', icon: '⚙️' },
+    { name: 'ช่วยเหลือ', path: '/help', icon: '❓' }
   ];
 
   return (
     <aside ref={sidebarRef} className={styles.sidebar}>
       <div className={styles.logo}>
-        <div className={styles.logoIcon}>I</div>
-        <h2>Invento</h2>
+        <h2>DPOS</h2>
       </div>
+      
+      <div className={`${styles.userProfile} nav-item`}>
+        <div className={styles.avatar}>👤</div>
+        <div className={styles.userInfo}>
+          <p className={styles.userName}>Admin <span style={{color: '#00a65a'}}>✔</span></p>
+          <p className={styles.userRole}><span style={{color: '#00a65a', fontSize: '10px'}}>●</span> Online</p>
+        </div>
+      </div>
+
       <nav className={styles.nav}>
         {links.map((link) => (
           <Link 
@@ -54,14 +67,6 @@ const Sidebar = () => {
           </Link>
         ))}
       </nav>
-      
-      <div className={`${styles.userProfile} nav-item`}>
-        <div className={styles.avatar}>A</div>
-        <div className={styles.userInfo}>
-          <p className={styles.userName}>Admin User</p>
-          <p className={styles.userRole}>Administrator</p>
-        </div>
-      </div>
     </aside>
   );
 };
