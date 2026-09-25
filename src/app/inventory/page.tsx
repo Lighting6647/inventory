@@ -33,6 +33,10 @@ export default function InventoryPage() {
   const [importFile, setImportFile] = useState<File | null>(null);
   const [importing, setImporting] = useState(false);
 
+  const [isAddOpen, setIsAddOpen] = useState(false);
+  const [newProduct, setNewProduct] = useState({ name: '', sku: '', barcode: '', cost: 0, price: 0, currentStock: 0, categoryId: '' });
+  const [categories, setCategories] = useState<{id: string, name: string}[]>([]);
+
   const fetchInventory = async () => {
     try {
       const res = await fetch('/api/inventory');
@@ -47,6 +51,7 @@ export default function InventoryPage() {
 
   useEffect(() => {
     fetchInventory();
+    fetch('/api/categories').then(r => r.json()).then(setCategories).catch(console.error);
   }, []);
 
   useGSAP(() => {
@@ -123,6 +128,26 @@ export default function InventoryPage() {
     });
   };
 
+  const handleAddProduct = async () => {
+    try {
+      const res = await fetch('/api/inventory/add', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(newProduct)
+      });
+      if (res.ok) {
+        setIsAddOpen(false);
+        setNewProduct({ name: '', sku: '', barcode: '', cost: 0, price: 0, currentStock: 0, categoryId: '' });
+        fetchInventory();
+      } else {
+        const err = await res.json();
+        alert('Error: ' + err.error);
+      }
+    } catch (e: any) {
+      alert('Error: ' + e.message);
+    }
+  };
+
   if (loading) return <div style={{ display: 'flex', justifyContent: 'center', padding: '3rem' }}>Loading inventory...</div>;
 
   const filteredProducts = products.filter(p => 
@@ -142,9 +167,9 @@ export default function InventoryPage() {
           <button className="btn btn-secondary" onClick={() => setIsImportOpen(true)} style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
             <span>📤</span> Import CSV
           </button>
-          <a href="/inbound" className="btn btn-primary" style={{ display: 'flex', gap: '0.5rem', alignItems: 'center', textDecoration: 'none' }}>
+          <button className="btn btn-primary" onClick={() => setIsAddOpen(true)} style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
             <span>+</span> Add Product
-          </a>
+          </button>
         </div>
       </header>
 
@@ -280,6 +305,34 @@ export default function InventoryPage() {
               <button className="btn btn-primary" onClick={handleImport} disabled={!importFile || importing}>
                 {importing ? 'Importing...' : 'Start Import'}
               </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {isAddOpen && (
+        <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, backgroundColor: 'rgba(0,0,0,0.5)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 50 }}>
+          <div className="card" style={{ width: '100%', maxWidth: '500px', maxHeight: '90vh', overflowY: 'auto' }}>
+            <h2 style={{ fontSize: '1.25rem', fontWeight: 600, marginBottom: '1rem' }}>Add Product Manually</h2>
+            
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', marginBottom: '1.5rem' }}>
+              <input className="input" placeholder="Product Name" value={newProduct.name} onChange={e => setNewProduct({...newProduct, name: e.target.value})} />
+              <input className="input" placeholder="SKU" value={newProduct.sku} onChange={e => setNewProduct({...newProduct, sku: e.target.value})} />
+              <input className="input" placeholder="Barcode (Optional)" value={newProduct.barcode} onChange={e => setNewProduct({...newProduct, barcode: e.target.value})} />
+              <select className="input" value={newProduct.categoryId} onChange={e => setNewProduct({...newProduct, categoryId: e.target.value})}>
+                <option value="">-- Select Category --</option>
+                {categories.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
+              </select>
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+                <input className="input" type="number" placeholder="Cost" value={newProduct.cost || ''} onChange={e => setNewProduct({...newProduct, cost: Number(e.target.value)})} />
+                <input className="input" type="number" placeholder="Price" value={newProduct.price || ''} onChange={e => setNewProduct({...newProduct, price: Number(e.target.value)})} />
+              </div>
+              <input className="input" type="number" placeholder="Initial Stock" value={newProduct.currentStock || ''} onChange={e => setNewProduct({...newProduct, currentStock: Number(e.target.value)})} />
+            </div>
+
+            <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '1rem' }}>
+              <button className="btn btn-secondary" onClick={() => setIsAddOpen(false)}>Cancel</button>
+              <button className="btn btn-primary" onClick={handleAddProduct}>Save Product</button>
             </div>
           </div>
         </div>
