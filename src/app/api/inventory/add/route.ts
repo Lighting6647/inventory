@@ -3,7 +3,7 @@ import { prisma } from '@/lib/prisma';
 
 export async function POST(req: Request) {
   try {
-    const { name, sku, barcode, categoryId, cost, price, unit, currentStock, minStockLevel } = await req.json();
+    const { name, sku, barcode, categoryName, cost, price, unit, currentStock, minStockLevel } = await req.json();
 
     if (!name || !sku) {
       return NextResponse.json({ error: 'Name and SKU are required' }, { status: 400 });
@@ -14,12 +14,22 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: 'SKU already exists' }, { status: 400 });
     }
 
+    let categoryId = null;
+    if (categoryName && categoryName.trim() !== '') {
+      const cat = await prisma.category.upsert({
+        where: { name: categoryName.trim() },
+        update: {},
+        create: { name: categoryName.trim() }
+      });
+      categoryId = cat.id;
+    }
+
     const product = await prisma.product.create({
       data: {
         name,
         sku,
         barcode: barcode || null,
-        categoryId: categoryId || null,
+        categoryId: categoryId,
         cost: Number(cost) || 0,
         price: Number(price) || 0,
         unit: unit || 'pcs',

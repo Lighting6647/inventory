@@ -34,7 +34,7 @@ export default function InventoryPage() {
   const [importing, setImporting] = useState(false);
 
   const [isAddOpen, setIsAddOpen] = useState(false);
-  const [newProduct, setNewProduct] = useState({ name: '', sku: '', barcode: '', cost: 0, price: 0, currentStock: 0, categoryId: '' });
+  const [newProduct, setNewProduct] = useState({ name: '', sku: '', barcode: '', cost: 0, price: 0, currentStock: 0, categoryName: '' });
   const [categories, setCategories] = useState<{id: string, name: string}[]>([]);
 
   const fetchInventory = async () => {
@@ -137,8 +137,9 @@ export default function InventoryPage() {
       });
       if (res.ok) {
         setIsAddOpen(false);
-        setNewProduct({ name: '', sku: '', barcode: '', cost: 0, price: 0, currentStock: 0, categoryId: '' });
+        setNewProduct({ name: '', sku: '', barcode: '', cost: 0, price: 0, currentStock: 0, categoryName: '' });
         fetchInventory();
+        fetch('/api/categories').then(r => r.json()).then(setCategories).catch(console.error);
       } else {
         const err = await res.json();
         alert('Error: ' + err.error);
@@ -319,10 +320,18 @@ export default function InventoryPage() {
               <input className="input" placeholder="Product Name" value={newProduct.name} onChange={e => setNewProduct({...newProduct, name: e.target.value})} />
               <input className="input" placeholder="SKU" value={newProduct.sku} onChange={e => setNewProduct({...newProduct, sku: e.target.value})} />
               <input className="input" placeholder="Barcode (Optional)" value={newProduct.barcode} onChange={e => setNewProduct({...newProduct, barcode: e.target.value})} />
-              <select className="input" value={newProduct.categoryId} onChange={e => setNewProduct({...newProduct, categoryId: e.target.value})}>
-                <option value="">-- Select Category --</option>
-                {categories.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
-              </select>
+              
+              <input 
+                className="input" 
+                list="category-options" 
+                placeholder="-- Select or Type Category --" 
+                value={newProduct.categoryName} 
+                onChange={e => setNewProduct({...newProduct, categoryName: e.target.value})} 
+              />
+              <datalist id="category-options">
+                {categories.map(c => <option key={c.id} value={c.name} />)}
+              </datalist>
+
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
                 <input className="input" type="number" placeholder="Cost" value={newProduct.cost || ''} onChange={e => setNewProduct({...newProduct, cost: Number(e.target.value)})} />
                 <input className="input" type="number" placeholder="Price" value={newProduct.price || ''} onChange={e => setNewProduct({...newProduct, price: Number(e.target.value)})} />

@@ -11,7 +11,7 @@ export default function InboundPage() {
   const containerRef = useRef<HTMLDivElement>(null);
   
   const [categories, setCategories] = useState<Category[]>([]);
-  const [selectedCat, setSelectedCat] = useState('');
+  const [selectedCatName, setSelectedCatName] = useState('');
   const [qty, setQty] = useState(1);
   const [cost, setCost] = useState(0);
   const [price, setPrice] = useState(0);
@@ -40,7 +40,7 @@ export default function InboundPage() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           barcode,
-          categoryId: selectedCat,
+          categoryName: selectedCatName,
           quantity: qty,
           cost,
           price
@@ -75,17 +75,19 @@ export default function InboundPage() {
 
         <div>
           <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 500 }}>Category (หมวดหมู่)</label>
-          <select 
+          <input 
             className="input" 
-            value={selectedCat} 
-            onChange={(e) => setSelectedCat(e.target.value)}
+            list="inbound-category-options" 
+            placeholder="-- Select or Type Category --"
+            value={selectedCatName} 
+            onChange={(e) => setSelectedCatName(e.target.value)}
             style={{ width: '100%' }}
-          >
-            <option value="">-- Select Category --</option>
+          />
+          <datalist id="inbound-category-options">
             {categories.map(c => (
-              <option key={c.id} value={c.id}>{c.name}</option>
+              <option key={c.id} value={c.name} />
             ))}
-          </select>
+          </datalist>
         </div>
 
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '1rem' }}>

@@ -3,7 +3,7 @@ import { prisma } from '@/lib/prisma';
 
 export async function POST(req: Request) {
   try {
-    const { barcode, categoryId, quantity, cost, price } = await req.json();
+    const { barcode, categoryName, quantity, cost, price } = await req.json();
 
     if (!barcode || !quantity) {
       return NextResponse.json({ error: 'Missing barcode or quantity' }, { status: 400 });
@@ -14,6 +14,16 @@ export async function POST(req: Request) {
 
     const c = Number(cost) || 0;
     const p = Number(price) || 0;
+
+    let categoryId = null;
+    if (categoryName && categoryName.trim() !== '') {
+      const cat = await prisma.category.upsert({
+        where: { name: categoryName.trim() },
+        update: {},
+        create: { name: categoryName.trim() }
+      });
+      categoryId = cat.id;
+    }
 
     let product = await prisma.product.findUnique({
       where: { sku: barcode } // Assume barcode = sku for simplicity in this system
@@ -26,7 +36,7 @@ export async function POST(req: Request) {
           sku: barcode,
           barcode: barcode,
           name: `Product ${barcode}`, // Placeholder name
-          categoryId: categoryId || null,
+          categoryId: categoryId,
           currentStock: qty,
           cost: c,
           price: p
