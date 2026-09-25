@@ -22,6 +22,7 @@ export default function POSPage() {
   const [isScannerOpen, setIsScannerOpen] = useState(false);
   const [paymentMethod, setPaymentMethod] = useState('CASH');
   const [cashTendered, setCashTendered] = useState<number>(0);
+  const [customerName, setCustomerName] = useState('');
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
@@ -62,12 +63,13 @@ export default function POSPage() {
       const res = await fetch('/api/pos/checkout', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ items: cart, paymentMethod, cashTendered })
+        body: JSON.stringify({ items: cart, paymentMethod, cashTendered, customerName })
       });
       if (res.ok) {
         alert('Checkout Complete!');
         setCart([]);
         setCashTendered(0);
+        setCustomerName('');
         // Refresh products
         const updatedProds = await fetch('/api/inventory').then(r => r.json());
         setProducts(updatedProds);
@@ -141,6 +143,15 @@ export default function POSPage() {
             <span>Total:</span>
             <span>฿{total.toLocaleString()}</span>
           </div>
+
+          <input 
+            type="text" 
+            className="input" 
+            placeholder="Customer Name (ชื่อลูกค้า - ไม่บังคับ)" 
+            value={customerName} 
+            onChange={e => setCustomerName(e.target.value)}
+            style={{ width: '100%', marginBottom: '1rem' }}
+          />
           
           <select 
             className="input" 

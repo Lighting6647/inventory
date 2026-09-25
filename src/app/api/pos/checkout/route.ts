@@ -3,7 +3,7 @@ import { prisma } from '@/lib/prisma';
 
 export async function POST(req: Request) {
   try {
-    const { items, paymentMethod, cashTendered } = await req.json();
+    const { items, paymentMethod, cashTendered, customerName } = await req.json();
 
     if (!items || items.length === 0) {
       return NextResponse.json({ error: 'Cart is empty' }, { status: 400 });
@@ -62,6 +62,7 @@ export async function POST(req: Request) {
     const order = await prisma.salesOrder.create({
       data: {
         soNumber: `POS-${Date.now()}`,
+        customerName: customerName || null,
         status: 'COMPLETED',
         totalAmount,
         totalCost,
