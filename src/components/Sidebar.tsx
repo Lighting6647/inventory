@@ -26,12 +26,13 @@ const Sidebar = () => {
   }, []);
 
   const links = [
-    { name: 'Dashboard', path: '/', icon: '📊' },
-    { name: 'Inventory', path: '/inventory', icon: '📦' },
-    { name: 'Issue / Sales', path: '/sales', icon: '📤' },
-    { name: 'Purchase Orders', path: '/orders', icon: '📥' },
-    { name: 'Suppliers', path: '/suppliers', icon: '🏢' },
+    { name: 'Dashboard (ภาพรวม)', path: '/', icon: '📊' },
+    { name: 'POS (ขายหน้าร้าน)', path: '/pos', icon: '🛒' },
+    { name: 'Inbound (รับของเข้า)', path: '/inbound', icon: '📥' },
+    { name: 'Inventory (คลังสินค้า)', path: '/inventory', icon: '📦' },
     { name: 'Transactions', path: '/transactions', icon: '📋' },
+    { name: 'Purchase Orders', path: '/orders', icon: '📄' },
+    { name: 'Suppliers', path: '/suppliers', icon: '🏢' },
     { name: 'Settings', path: '/settings', icon: '⚙️' }
   ];
 

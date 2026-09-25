@@ -37,11 +37,23 @@ model Supplier {
   pos       PurchaseOrder[]
 }
 
+model Category {
+  id          String    @id @default(cuid())
+  name        String    @unique
+  description String?
+  products    Product[]
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+}
+
 model Product {
   id            String   @id @default(cuid())
   sku           String   @unique
   name          String
-  category      String?
+  
+  categoryId    String?
+  category      Category? @relation(fields: [categoryId], references: [id])
+  
   brand         String?
   customAttributes String? // JSON string
   description   String?
@@ -52,7 +64,8 @@ model Product {
   weightPerUnit Float?   // น้ำหนักต่อหน่วย (kg)
   currentStock  Float    @default(0)
   minStockLevel Float    @default(10)
-  price         Float    @default(0)
+  cost          Float    @default(0) // ทุน
+  price         Float    @default(0) // ราคาขาย
   barcode       String?  @unique
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
@@ -160,18 +173,22 @@ model QuotationItem {
 }
 
 model SalesOrder {
-  id          String   @id @default(cuid())
-  soNumber    String   @unique
-  customerName String
-  status      String   @default("PENDING") // PENDING, FULFILLED, CANCELLED
-  totalAmount Float    @default(0)
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  id           String   @id @default(cuid())
+  soNumber     String   @unique // ใช้เป็น Ticket Number / Receipt Number
+  customerName String?  // หน้าร้านอาจไม่มีชื่อลูกค้า
+  status       String   @default("COMPLETED") // PENDING, COMPLETED, CANCELLED
+  totalAmount  Float    @default(0)
+  totalCost    Float    @default(0) // ต้นทุนรวมของบิลนี้ เพื่อคิดกำไร
+  paymentMethod String  @default("CASH") // CASH, TRANSFER, CREDIT
+  cashTendered Float    @default(0) // รับเงินมา
+  change       Float    @default(0) // เงินทอน
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
 
-  quotationId String?
-  quotation   Quotation? @relation(fields: [quotationId], references: [id])
+  quotationId  String?
+  quotation    Quotation? @relation(fields: [quotationId], references: [id])
 
-  items       SalesOrderItem[]
+  items        SalesOrderItem[]
 }
 
 model SalesOrderItem {
