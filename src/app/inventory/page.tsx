@@ -5,8 +5,6 @@ import gsap from 'gsap';
 import { useGSAP } from '@gsap/react';
 import BarcodeScanner from '@/components/BarcodeScanner';
 
-import Papa from 'papaparse';
-
 type Product = {
   id: string;
   sku: string;
@@ -43,7 +41,6 @@ export default function InventoryPage() {
 
   useEffect(() => {
     fetchInventory();
-    fetch('/api/categories').then(r => r.json()).then(setCategories).catch(console.error);
   }, []);
 
   useGSAP(() => {
@@ -82,64 +79,7 @@ export default function InventoryPage() {
     }
   };
 
-  const handleImport = async () => {
-    if (!importFile) return;
-    setImporting(true);
 
-    Papa.parse(importFile, {
-      header: true,
-      skipEmptyLines: true,
-      complete: async (results) => {
-        try {
-          const res = await fetch('/api/inventory/import', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ products: results.data })
-          });
-          
-          if (res.ok) {
-            const data = await res.json();
-            alert(`Import successful! Added/Updated: ${data.successCount}, Skipped: ${data.skipCount}`);
-            setIsImportOpen(false);
-            setImportFile(null);
-            fetchInventory();
-          } else {
-            const err = await res.json();
-            alert(`Import failed: ${err.error}`);
-          }
-        } catch (e: any) {
-          alert('Error during import: ' + e.message);
-        } finally {
-          setImporting(false);
-        }
-      },
-      error: (error) => {
-        alert('Failed to parse CSV: ' + error.message);
-        setImporting(false);
-      }
-    });
-  };
-
-  const handleAddProduct = async () => {
-    try {
-      const res = await fetch('/api/inventory/add', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(newProduct)
-      });
-      if (res.ok) {
-        setIsAddOpen(false);
-        setNewProduct({ name: '', sku: '', barcode: '', cost: 0, price: 0, currentStock: 0, categoryName: '' });
-        fetchInventory();
-        fetch('/api/categories').then(r => r.json()).then(setCategories).catch(console.error);
-      } else {
-        const err = await res.json();
-        alert('Error: ' + err.error);
-      }
-    } catch (e: any) {
-      alert('Error: ' + e.message);
-    }
-  };
 
   if (loading) return <div style={{ display: 'flex', justifyContent: 'center', padding: '3rem' }}>Loading inventory...</div>;
 
