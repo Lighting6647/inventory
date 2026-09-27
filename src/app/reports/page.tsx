@@ -3,14 +3,19 @@ import React, { useState, useEffect } from 'react';
 
 export default function ReportsPage() {
   const [sales, setSales] = useState<any[]>([]);
+  const [stats, setStats] = useState({ dailySales: 0, totalOrders: 0, totalCustomers: 0 });
 
   useEffect(() => {
-    fetch('/api/transactions') // using existing API or simple summary
+    // Fetch transaction logs
+    fetch('/api/transactions')
       .then(r => r.json())
-      .then(data => {
-        // Just mock some data for the report view
-        setSales(data.slice(0, 50));
-      })
+      .then(data => setSales(Array.isArray(data) ? data.slice(0, 50) : []))
+      .catch(console.error);
+
+    // Fetch real summary stats
+    fetch('/api/reports')
+      .then(r => r.json())
+      .then(data => setStats(data))
       .catch(console.error);
   }, []);
 
@@ -21,15 +26,15 @@ export default function ReportsPage() {
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '1rem', marginBottom: '2rem' }}>
         <div className="card" style={{ borderLeft: '4px solid #3c8dbc' }}>
           <h3 style={{ fontSize: '1rem', color: 'var(--secondary-foreground)' }}>Daily Sales</h3>
-          <p style={{ fontSize: '1.5rem', fontWeight: 700 }}>฿ 14,500</p>
+          <p style={{ fontSize: '1.5rem', fontWeight: 700 }}>฿ {stats.dailySales.toLocaleString()}</p>
         </div>
         <div className="card" style={{ borderLeft: '4px solid #00a65a' }}>
           <h3 style={{ fontSize: '1rem', color: 'var(--secondary-foreground)' }}>Total Orders</h3>
-          <p style={{ fontSize: '1.5rem', fontWeight: 700 }}>45</p>
+          <p style={{ fontSize: '1.5rem', fontWeight: 700 }}>{stats.totalOrders.toLocaleString()}</p>
         </div>
         <div className="card" style={{ borderLeft: '4px solid #f39c12' }}>
-          <h3 style={{ fontSize: '1rem', color: 'var(--secondary-foreground)' }}>New Customers</h3>
-          <p style={{ fontSize: '1.5rem', fontWeight: 700 }}>12</p>
+          <h3 style={{ fontSize: '1rem', color: 'var(--secondary-foreground)' }}>Total Customers</h3>
+          <p style={{ fontSize: '1.5rem', fontWeight: 700 }}>{stats.totalCustomers.toLocaleString()}</p>
         </div>
       </div>
 
