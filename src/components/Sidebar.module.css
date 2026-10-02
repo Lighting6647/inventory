@@ -9,18 +9,14 @@
 }
 
 .logo {
-  height: 50px;
-  background-color: #367fa9;
+  height: 56px;
+  background: linear-gradient(135deg, #1e3a5f 0%, #152238 100%);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
   display: flex;
   align-items: center;
   justify-content: center;
+  padding: 0 10px;
   color: white;
-}
-
-.logo h2 {
-  font-size: 1.25rem;
-  font-weight: 700;
-  letter-spacing: 1px;
 }
 
 .userProfile {

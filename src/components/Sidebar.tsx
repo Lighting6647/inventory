@@ -6,6 +6,7 @@ import { usePathname } from 'next/navigation';
 import gsap from 'gsap';
 import { useGSAP } from '@gsap/react';
 import styles from './Sidebar.module.css';
+import Logo from './Logo';
 
 const Sidebar = () => {
   const sidebarRef = useRef<HTMLElement>(null);
@@ -44,7 +45,7 @@ const Sidebar = () => {
   return (
     <aside ref={sidebarRef} className={styles.sidebar}>
       <div className={styles.logo}>
-        <h2>DPOS</h2>
+        <Logo size="medium" />
       </div>
       
       <div className={`${styles.userProfile} nav-item`}>
