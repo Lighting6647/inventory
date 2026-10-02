@@ -1,7 +1,7 @@
-"use client";
+﻿"use client";
 
 import React, { useEffect, useRef, useState } from 'react';
-import { Html5Qrcode } from 'html5-qrcode';
+import { Html5QrcodeScanner } from 'html5-qrcode';
 
 interface BarcodeScannerProps {
   onScanSuccess: (decodedText: string) => void;
@@ -9,47 +9,40 @@ interface BarcodeScannerProps {
 }
 
 const BarcodeScanner: React.FC<BarcodeScannerProps> = ({ onScanSuccess, onClose }) => {
-  const [error, setError] = useState<string | null>(null);
-  const scannerRef = useRef<Html5Qrcode | null>(null);
   const scannerElementId = 'reader';
+  const hasScanned = useRef(false);
 
   useEffect(() => {
-    let html5Qrcode: Html5Qrcode;
+    // Prevent multiple calls to onScanSuccess
+    hasScanned.current = false;
+    
+    const html5QrcodeScanner = new Html5QrcodeScanner(
+      scannerElementId,
+      { fps: 10, qrbox: { width: 250, height: 250 } },
+      false
+    );
 
-    const startScanner = async () => {
-      try {
-        html5Qrcode = new Html5Qrcode(scannerElementId);
-        scannerRef.current = html5Qrcode;
-
-        await html5Qrcode.start(
-          { facingMode: "environment" },
-          {
-            fps: 10,
-            qrbox: { width: 250, height: 250 }
-          },
-          (decodedText) => {
-            onScanSuccess(decodedText);
-            // Stop after success
-            if (scannerRef.current) {
-              scannerRef.current.stop().then(() => {
-                onClose();
-              }).catch(err => console.error(err));
-            }
-          },
-          (errorMessage) => {
-            // Ignore normal errors like "not found" to prevent spam
-          }
-        );
-      } catch (err: any) {
-        setError(err?.message || 'Failed to start camera. Please check permissions.');
+    html5QrcodeScanner.render(
+      (decodedText) => {
+        if (!hasScanned.current) {
+          hasScanned.current = true;
+          onScanSuccess(decodedText);
+          
+          html5QrcodeScanner.clear().then(() => {
+            onClose();
+          }).catch(console.error);
+        }
+      },
+      (errorMessage) => {
+        // Ignore normal errors
       }
-    };
-
-    startScanner();
+    );
 
     return () => {
-      if (scannerRef.current && scannerRef.current.isScanning) {
-        scannerRef.current.stop().catch(console.error);
+      try {
+        html5QrcodeScanner.clear().catch(console.error);
+      } catch (error) {
+        console.error("Failed to clear scanner on unmount: ", error);
       }
     };
   }, [onScanSuccess, onClose]);
@@ -62,11 +55,7 @@ const BarcodeScanner: React.FC<BarcodeScannerProps> = ({ onScanSuccess, onClose 
           <button onClick={onClose} style={closeBtnStyle}>✕</button>
         </div>
         
-        {error ? (
-          <div style={{ color: '#ef4444', padding: '1rem', textAlign: 'center' }}>{error}</div>
-        ) : (
-          <div id={scannerElementId} style={{ width: '100%', marginTop: '1rem', minHeight: '300px' }} />
-        )}
+        <div id={scannerElementId} style={{ width: '100%', marginTop: '1rem', minHeight: '300px' }}></div>
         
         <p style={{ textAlign: 'center', marginTop: '1rem', opacity: 0.7, fontSize: '0.875rem' }}>
           Point your camera at a barcode to scan.
@@ -89,13 +78,14 @@ const overlayStyle: React.CSSProperties = {
 };
 
 const modalStyle: React.CSSProperties = {
-  backgroundColor: 'var(--background)',
-  border: '1px solid var(--border)',
+  backgroundColor: '#fff',
+  border: '1px solid #ddd',
   borderRadius: '0.75rem',
   padding: '1.5rem',
   width: '90%',
   maxWidth: '450px',
-  boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.5)'
+  boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.5)',
+  color: '#333'
 };
 
 const headerStyle: React.CSSProperties = {
@@ -107,7 +97,7 @@ const headerStyle: React.CSSProperties = {
 const closeBtnStyle: React.CSSProperties = {
   background: 'none',
   border: 'none',
-  color: 'var(--danger, #ef4444)',
+  color: '#ef4444',
   fontSize: '1.25rem',
   cursor: 'pointer',
   padding: '0.25rem'
