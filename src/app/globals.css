@@ -132,3 +132,61 @@ button {
     border: 1px solid rgba(255, 255, 255, 0.05);
   }
 }
+
+/* Responsive Utilities */
+.sidebar-container {
+  width: 250px;
+  flex-shrink: 0;
+  transition: transform 0.3s ease;
+  z-index: 50;
+  background-color: #222d32;
+}
+
+.sidebar-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 40;
+}
+
+@media (max-width: 768px) {
+  .sidebar-container {
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    transform: translateX(-100%);
+  }
+  
+  .sidebar-container.open {
+    transform: translateX(0);
+  }
+  
+  .sidebar-overlay {
+    display: block;
+  }
+
+  .pos-container {
+    grid-template-columns: 1fr !important;
+  }
+  
+  .pos-cart {
+    border-left: none !important;
+    border-top: 1px solid var(--border);
+  }
+}
+
+/* Make all tables responsive */
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+@media (max-width: 768px) {
+  table {
+    display: block;
+    overflow-x: auto;
+    white-space: nowrap;
+  }
+}

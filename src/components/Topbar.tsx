@@ -1,36 +1,30 @@
-import React from 'react';
-import Link from 'next/link';
+"use client";
 
-const Topbar = () => {
+import React from 'react';
+import styles from './Topbar.module.css';
+
+interface TopbarProps {
+  onToggleSidebar?: () => void;
+}
+
+export default function Topbar({ onToggleSidebar }: TopbarProps) {
   return (
-    <header style={{ 
-      height: '50px', 
-      backgroundColor: '#3c8dbc', 
-      color: 'white', 
-      display: 'flex', 
-      alignItems: 'center', 
-      justifyContent: 'space-between', 
-      padding: '0 1rem' 
-    }}>
+    <header className={styles.topbar} style={{ padding: '0 1rem', display: 'flex', alignItems: 'center', justifyContent: 'space-between', backgroundColor: '#3c8dbc', color: 'white', height: '50px' }}>
       <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-        <span style={{ fontSize: '1.25rem', cursor: 'pointer' }}>☰</span>
-        <button style={{ backgroundColor: '#00a65a', border: 'none', color: 'white', padding: '0.25rem 0.5rem', borderRadius: '3px', cursor: 'pointer', fontWeight: 'bold' }}>+</button>
+        <button 
+          onClick={onToggleSidebar} 
+          style={{ background: 'none', border: 'none', color: 'white', fontSize: '1.25rem', cursor: 'pointer', padding: '0.25rem 0.5rem' }}
+          aria-label="Toggle menu"
+        >
+          ☰
+        </button>
+        <span style={{ fontWeight: 600, fontSize: '1.1rem' }}>DPOS POS & Inventory</span>
       </div>
-      
-      <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', fontSize: '0.875rem' }}>
-        <span style={{ cursor: 'pointer' }}>🇹🇭 Thai</span>
-        <Link href="/pos" style={{ color: 'white', textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '0.25rem' }}>
-          <span>🛒</span> POS
-        </Link>
-        <Link href="/" style={{ color: 'white', textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '0.25rem' }}>
-          <span>🏠</span> ภาพรวม
-        </Link>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', cursor: 'pointer' }}>
-          <span>👤</span> Admin
-        </div>
+
+      <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+        <div style={{ fontSize: '0.875rem' }}>Admin</div>
+        <div className={styles.avatar} style={{ backgroundColor: '#222d32', width: '32px', height: '32px' }}>A</div>
       </div>
     </header>
   );
-};
-
-export default Topbar;
+}

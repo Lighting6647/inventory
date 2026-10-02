@@ -47,7 +47,7 @@ export default function Dashboard() {
       </div>
 
       {/* Top 8 Stats Grid */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '1rem' }}>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '1rem' }}>
         
         {/* Row 1 */}
         <div className="dpos-card" style={{ display: 'flex', backgroundColor: 'white', borderRadius: '2px', boxShadow: '0 1px 1px rgba(0,0,0,0.1)' }}>
@@ -118,7 +118,7 @@ export default function Dashboard() {
       </div>
 
       {/* Bottom 4 Colored Blocks */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '1rem', marginTop: '0.5rem' }}>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '1rem', marginTop: '0.5rem' }}>
         
         <div className="dpos-card" style={{ backgroundColor: '#e81e63', color: 'white', borderRadius: '2px', display: 'flex', flexDirection: 'column' }}>
           <div style={{ padding: '1rem', display: 'flex', justifyContent: 'space-between' }}>
@@ -167,7 +167,7 @@ export default function Dashboard() {
       </div>
 
       {/* Bottom Charts & Tables */}
-      <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr', gap: '1rem', marginTop: '0.5rem' }}>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '1rem', marginTop: '0.5rem' }}>
         
         <div className="dpos-card" style={{ backgroundColor: 'white', borderRadius: '2px', boxShadow: '0 1px 1px rgba(0,0,0,0.1)' }}>
           <div style={{ padding: '0.75rem 1rem', borderBottom: '1px solid #f4f4f4', fontWeight: 600 }}>ยอดขายประจำเดือน</div>

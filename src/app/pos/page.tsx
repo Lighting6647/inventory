@@ -85,32 +85,50 @@ export default function POSPage() {
   };
 
   return (
-    <div ref={containerRef} style={{ display: 'grid', gridTemplateColumns: '1fr 350px', gap: '2rem', height: 'calc(100vh - 150px)' }}>
+    <div ref={containerRef} className="pos-container">
+      <style jsx>{`
+        .pos-container {
+          display: grid;
+          grid-template-columns: 1fr 360px;
+          gap: 1.5rem;
+          min-height: calc(100vh - 120px);
+        }
+        @media (max-width: 1023px) {
+          .pos-container {
+            display: flex;
+            flex-direction: column;
+            min-height: auto;
+          }
+          .pos-cart {
+            max-height: 600px;
+          }
+        }
+      `}</style>
       {/* Left: Products & Scanner */}
       <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-        <header style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-          <h1 style={{ fontSize: '2rem', fontWeight: 700 }}>POS (ขายหน้าร้าน)</h1>
+        <header style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '0.5rem' }}>
+          <h1 style={{ fontSize: '1.5rem', fontWeight: 700 }}>POS (ขายหน้าร้าน)</h1>
           <button className="btn btn-primary" onClick={() => setIsScannerOpen(true)}>
             📷 Scan Barcode
           </button>
         </header>
         
         <div className="pos-grid" style={{ 
-          display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(150px, 1fr))', gap: '1rem',
-          overflowY: 'auto', paddingBottom: '2rem', opacity: 0
+          display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(130px, 1fr))', gap: '0.75rem',
+          overflowY: 'auto', paddingBottom: '1rem', opacity: 0
         }}>
           {products.map(p => (
             <div 
               key={p.id} 
               className="card glass" 
-              style={{ cursor: 'pointer', textAlign: 'center', transition: 'transform 0.1s' }}
+              style={{ cursor: 'pointer', textAlign: 'center', transition: 'transform 0.1s', padding: '0.75rem' }}
               onClick={() => addToCart(p)}
               onMouseDown={e => e.currentTarget.style.transform = 'scale(0.95)'}
               onMouseUp={e => e.currentTarget.style.transform = 'scale(1)'}
             >
-              <h3 style={{ fontWeight: 600, fontSize: '1rem', marginBottom: '0.5rem' }}>{p.name}</h3>
-              <p style={{ color: 'var(--secondary-foreground)', fontSize: '0.8rem', marginBottom: '0.5rem' }}>SKU: {p.sku}</p>
-              <div style={{ fontWeight: 700, color: 'var(--primary)', fontSize: '1.25rem' }}>฿{p.price}</div>
+              <h3 style={{ fontWeight: 600, fontSize: '0.9rem', marginBottom: '0.25rem' }}>{p.name}</h3>
+              <p style={{ color: 'var(--secondary-foreground)', fontSize: '0.75rem', marginBottom: '0.25rem' }}>SKU: {p.sku}</p>
+              <div style={{ fontWeight: 700, color: 'var(--primary)', fontSize: '1.1rem' }}>฿{p.price}</div>
               <div style={{ fontSize: '0.75rem', color: p.currentStock > 0 ? '#10b981' : '#ef4444' }}>
                 Stock: {p.currentStock}
               </div>
