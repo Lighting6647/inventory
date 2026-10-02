@@ -4,7 +4,7 @@ import LayoutWrapper from '@/components/LayoutWrapper';
 
 export const metadata: Metadata = {
   title: 'DPOS - Inventory & POS System',
-  description: 'เธฃเธฐเธเธเธเธฃเธดเธซเธฒเธฃเธเธฑเธ”เธเธฒเธฃเธเธฅเธฑเธเธชเธดเธเธเนเธฒเนเธฅเธฐเธเธฒเธขเธซเธเนเธฒเธฃเนเธฒเธ POS',
+  description: 'ระบบบริหารจัดการคลังสินค้าและขายหน้าร้าน POS',
 };
 
 export default function RootLayout({
