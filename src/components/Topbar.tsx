@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import React from 'react';
 import styles from './Topbar.module.css';
@@ -16,7 +16,7 @@ export default function Topbar({ onToggleSidebar }: TopbarProps) {
           style={{ background: 'none', border: 'none', color: 'white', fontSize: '1.25rem', cursor: 'pointer', padding: '0.25rem 0.5rem' }}
           aria-label="Toggle menu"
         >
-          ☰
+          โฐ
         </button>
         <span style={{ fontWeight: 600, fontSize: '1.1rem' }}>DPOS POS & Inventory</span>
       </div>
