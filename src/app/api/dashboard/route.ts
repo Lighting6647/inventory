@@ -14,6 +14,24 @@ export async function GET() {
       }
     });
 
+    const lowStockList = await prisma.product.findMany({
+      where: {
+        currentStock: {
+          lte: 10
+        }
+      },
+      take: 6,
+      orderBy: { currentStock: 'asc' },
+      select: {
+        id: true,
+        name: true,
+        sku: true,
+        currentStock: true,
+        minStockLevel: true,
+        price: true,
+      }
+    });
+
     const startOfDay = new Date();
     startOfDay.setHours(0, 0, 0, 0);
     const endOfDay = new Date();
@@ -39,9 +57,43 @@ export async function GET() {
       include: { product: true }
     });
 
+    // Top selling products based on sales order items
+    const topSalesItems = await prisma.salesOrderItem.groupBy({
+      by: ['productId'],
+      _sum: {
+        quantity: true,
+      },
+      orderBy: {
+        _sum: {
+          quantity: 'desc'
+        }
+      },
+      take: 5,
+    });
+
+    const topSellingProducts = await Promise.all(
+      topSalesItems.map(async (item) => {
+        const prod = await prisma.product.findUnique({
+          where: { id: item.productId },
+          select: { name: true, sku: true, price: true }
+        });
+        const qty = item._sum?.quantity || 0;
+        const price = prod?.price || 0;
+        return {
+          productId: item.productId,
+          name: prod?.name || 'สินค้า',
+          sku: prod?.sku || '-',
+          soldQty: qty,
+          totalRevenue: qty * price,
+        };
+      })
+    );
+
     return NextResponse.json({
       totalProducts,
       lowStockItems: lowStockCount,
+      lowStockList,
+      topSellingProducts,
       recentTransactions,
       todaySales: salesTotal,
       todayProfit: profitTotal,
