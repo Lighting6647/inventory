@@ -190,28 +190,28 @@ export default function POSPage() {
       `}</style>
 
       {/* Left: Products & Search Bar */}
-      <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-        <header style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '0.75rem' }}>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
+        <header style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '1rem' }}>
           <div>
-            <h1 style={{ fontSize: '1.4rem', fontWeight: 800, color: '#1e293b', display: 'flex', alignItems: 'center', gap: '8px' }}>
-              <span>🛒</span> POS จุดขายหน้าร้าน (Cashier)
+            <h1 style={{ fontSize: '1.5rem', fontWeight: 800, color: 'var(--text-primary)', display: 'flex', alignItems: 'center', gap: '10px' }}>
+              <span style={{ fontSize: '1.8rem' }}>🛒</span> POS จุดขายหน้าร้าน (Cashier)
             </h1>
-            <p style={{ fontSize: '0.8rem', color: '#64748b', margin: 0 }}>
+            <p style={{ fontSize: '0.875rem', color: 'var(--text-secondary)', margin: 0, marginTop: '0.25rem' }}>
               ระบบคิดเงินรวดเร็ว รองรับสแกนบาร์โค้ด และพิมพ์ใบเสร็จ
             </p>
           </div>
-          <div style={{ display: 'flex', gap: '0.5rem' }}>
+          <div style={{ display: 'flex', gap: '0.75rem' }}>
             <button 
-              className="btn" 
+              className="btn btn-secondary" 
               onClick={openCustomerDisplay}
-              style={{ display: 'flex', alignItems: 'center', gap: '6px', backgroundColor: '#475569', color: 'white', padding: '0.5rem 0.85rem' }}
+              style={{ display: 'flex', alignItems: 'center', gap: '8px' }}
             >
               📺 เปิดหน้าจอลูกค้า
             </button>
             <button 
               className="btn btn-primary" 
               onClick={() => setIsScannerOpen(true)}
-              style={{ display: 'flex', alignItems: 'center', gap: '6px', backgroundColor: '#0284c7', padding: '0.5rem 0.85rem' }}
+              style={{ display: 'flex', alignItems: 'center', gap: '8px' }}
             >
               📷 สแกนบาร์โค้ด
             </button>
