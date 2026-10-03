@@ -1,11 +1,18 @@
 ﻿"use client";
 
 import React, { useState } from 'react';
+import { usePathname } from 'next/navigation';
 import Sidebar from './Sidebar';
 import Topbar from './Topbar';
 
 export default function LayoutWrapper({ children }: { children: React.ReactNode }) {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const pathname = usePathname();
+
+  // Hide sidebar and topbar for full-screen pages like customer-display
+  if (pathname === '/customer-display') {
+    return <>{children}</>;
+  }
 
   return (
     <div className="layout-container" style={{ display: 'flex', minHeight: '100vh', backgroundColor: '#f4f6f9', position: 'relative' }}>

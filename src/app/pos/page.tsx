@@ -87,6 +87,23 @@ export default function POSPage() {
 
   const total = cart.reduce((sum, item) => sum + (Number(item.price) * item.qty), 0);
 
+  useEffect(() => {
+    let status = 'idle';
+    if (isPromptPayOpen) status = 'paying';
+    if (receiptData) status = 'success';
+
+    localStorage.setItem('pos-live-cart', JSON.stringify({
+      cart,
+      total,
+      showPayment: isPromptPayOpen,
+      status
+    }));
+  }, [cart, total, isPromptPayOpen, receiptData]);
+
+  const openCustomerDisplay = () => {
+    window.open('/customer-display', 'CustomerDisplay', 'width=1024,height=768');
+  };
+
   const filteredProducts = products.filter(p => 
     p.name.toLowerCase().includes(searchQuery.toLowerCase()) || 
     p.sku.toLowerCase().includes(searchQuery.toLowerCase())
@@ -184,6 +201,13 @@ export default function POSPage() {
             </p>
           </div>
           <div style={{ display: 'flex', gap: '0.5rem' }}>
+            <button 
+              className="btn" 
+              onClick={openCustomerDisplay}
+              style={{ display: 'flex', alignItems: 'center', gap: '6px', backgroundColor: '#475569', color: 'white', padding: '0.5rem 0.85rem' }}
+            >
+              📺 เปิดหน้าจอลูกค้า
+            </button>
             <button 
               className="btn btn-primary" 
               onClick={() => setIsScannerOpen(true)}
