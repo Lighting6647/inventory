@@ -18,19 +18,24 @@ export default function PromptPayModal({
   const [copied, setCopied] = useState(false);
   const [promptPayNumber, setPromptPayNumber] = useState("081-234-5678");
   const [qrImage, setQrImage] = useState<string | null>(null);
+  const [accountName, setAccountName] = useState("");
+  const [bankName, setBankName] = useState("");
 
   useEffect(() => {
     fetch('/api/settings')
       .then(res => res.json())
       .then(data => {
         const numberSetting = data.find((s: any) => s.key === 'PROMPTPAY_NUMBER');
-        if (numberSetting && numberSetting.value) {
-          setPromptPayNumber(numberSetting.value);
-        }
+        if (numberSetting && numberSetting.value) setPromptPayNumber(numberSetting.value);
+        
         const imageSetting = data.find((s: any) => s.key === 'PROMPTPAY_QR_IMAGE');
-        if (imageSetting && imageSetting.value) {
-          setQrImage(imageSetting.value);
-        }
+        if (imageSetting && imageSetting.value) setQrImage(imageSetting.value);
+
+        const accountSetting = data.find((s: any) => s.key === 'ACCOUNT_NAME');
+        if (accountSetting && accountSetting.value) setAccountName(accountSetting.value);
+
+        const bankSetting = data.find((s: any) => s.key === 'BANK_NAME');
+        if (bankSetting && bankSetting.value) setBankName(bankSetting.value);
       })
       .catch(console.error);
   }, []);
@@ -45,10 +50,7 @@ export default function PromptPayModal({
     <div
       style={{
         position: "fixed",
-        top: 0,
-        left: 0,
-        right: 0,
-        bottom: 0,
+        top: 0, left: 0, right: 0, bottom: 0,
         backgroundColor: "rgba(0, 0, 0, 0.6)",
         backdropFilter: "blur(4px)",
         display: "flex",
@@ -203,34 +205,43 @@ export default function PromptPayModal({
           <div
             style={{
               marginTop: "0.75rem",
-              padding: "0.5rem 0.75rem",
+              padding: "0.75rem",
               backgroundColor: "#f1f5f9",
               borderRadius: "8px",
-              fontSize: "0.8rem",
-              color: "#334155",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "space-between",
+              textAlign: "left"
             }}
           >
-            <div>
-              <span style={{ color: "#64748b" }}>พร้อมเพย์: </span>
-              <strong>{promptPayNumber}</strong>
+            {accountName && (
+              <div style={{ fontSize: "0.95rem", fontWeight: 700, color: "#1e293b", marginBottom: "0.25rem" }}>
+                {accountName}
+              </div>
+            )}
+            
+            <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "0.25rem" }}>
+              <div style={{ fontSize: "0.85rem", color: "#3b82f6", fontWeight: 600 }}>
+                {promptPayNumber || "081-234-5678"}
+              </div>
+              <button
+                onClick={handleCopy}
+                style={{
+                  background: "none",
+                  border: "1px solid #cbd5e1",
+                  borderRadius: "4px",
+                  padding: "2px 6px",
+                  fontSize: "0.7rem",
+                  cursor: "pointer",
+                  color: copied ? "#059669" : "#2563eb",
+                }}
+              >
+                {copied ? "✓ คัดลอกแล้ว" : "คัดลอก"}
+              </button>
             </div>
-            <button
-              onClick={handleCopy}
-              style={{
-                background: "none",
-                border: "1px solid #cbd5e1",
-                borderRadius: "4px",
-                padding: "2px 6px",
-                fontSize: "0.7rem",
-                cursor: "pointer",
-                color: copied ? "#059669" : "#2563eb",
-              }}
-            >
-              {copied ? "✓ คัดลอกแล้ว" : "คัดลอก"}
-            </button>
+
+            {bankName && (
+              <div style={{ fontSize: "0.75rem", color: "#64748b" }}>
+                {bankName}
+              </div>
+            )}
           </div>
         </div>
 
