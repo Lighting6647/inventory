@@ -1,6 +1,6 @@
-"use client";
+﻿"use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 
 interface PromptPayModalProps {
   amount: number;
@@ -17,14 +17,19 @@ export default function PromptPayModal({
 }: PromptPayModalProps) {
   const [copied, setCopied] = useState(false);
   const [promptPayNumber, setPromptPayNumber] = useState("081-234-5678");
+  const [qrImage, setQrImage] = useState<string | null>(null);
 
-  React.useEffect(() => {
+  useEffect(() => {
     fetch('/api/settings')
       .then(res => res.json())
       .then(data => {
-        const setting = data.find((s: any) => s.key === 'PROMPTPAY_NUMBER');
-        if (setting && setting.value) {
-          setPromptPayNumber(setting.value);
+        const numberSetting = data.find((s: any) => s.key === 'PROMPTPAY_NUMBER');
+        if (numberSetting && numberSetting.value) {
+          setPromptPayNumber(numberSetting.value);
+        }
+        const imageSetting = data.find((s: any) => s.key === 'PROMPTPAY_QR_IMAGE');
+        if (imageSetting && imageSetting.value) {
+          setQrImage(imageSetting.value);
         }
       })
       .catch(console.error);
@@ -40,8 +45,11 @@ export default function PromptPayModal({
     <div
       style={{
         position: "fixed",
-        inset: 0,
-        backgroundColor: "rgba(0,0,0,0.75)",
+        top: 0,
+        left: 0,
+        right: 0,
+        bottom: 0,
+        backgroundColor: "rgba(0, 0, 0, 0.6)",
         backdropFilter: "blur(4px)",
         display: "flex",
         alignItems: "center",
@@ -103,71 +111,75 @@ export default function PromptPayModal({
               boxShadow: "0 4px 6px -1px rgba(0,0,0,0.05)",
             }}
           >
-            {/* Visual SVG QR Code with PromptPay Branding */}
-            <svg
-              width="180"
-              height="180"
-              viewBox="0 0 100 100"
-              style={{ display: "block" }}
-            >
-              <rect width="100" height="100" fill="#ffffff" rx="4" />
-              {/* Corner Position Marks */}
-              <rect x="8" y="8" width="24" height="24" fill="#003d6b" rx="2" />
-              <rect x="12" y="12" width="16" height="16" fill="#ffffff" rx="1" />
-              <rect x="16" y="16" width="8" height="8" fill="#003d6b" />
-
-              <rect x="68" y="8" width="24" height="24" fill="#003d6b" rx="2" />
-              <rect x="72" y="12" width="16" height="16" fill="#ffffff" rx="1" />
-              <rect x="76" y="16" width="8" height="8" fill="#003d6b" />
-
-              <rect x="8" y="68" width="24" height="24" fill="#003d6b" rx="2" />
-              <rect x="12" y="72" width="16" height="16" fill="#ffffff" rx="1" />
-              <rect x="16" y="76" width="8" height="8" fill="#003d6b" />
-
-              {/* Data Pattern Mock */}
-              <rect x="36" y="10" width="6" height="6" fill="#003d6b" />
-              <rect x="46" y="14" width="8" height="4" fill="#003d6b" />
-              <rect x="58" y="10" width="6" height="6" fill="#003d6b" />
-
-              <rect x="36" y="24" width="8" height="6" fill="#003d6b" />
-              <rect x="48" y="22" width="6" height="8" fill="#003d6b" />
-              <rect x="58" y="24" width="6" height="6" fill="#003d6b" />
-
-              <rect x="10" y="36" width="6" height="8" fill="#003d6b" />
-              <rect x="22" y="40" width="6" height="6" fill="#003d6b" />
-              <rect x="32" y="36" width="8" height="8" fill="#003d6b" />
-              <rect x="44" y="38" width="12" height="6" fill="#003d6b" />
-              <rect x="60" y="36" width="6" height="8" fill="#003d6b" />
-              <rect x="72" y="40" width="8" height="6" fill="#003d6b" />
-              <rect x="84" y="36" width="6" height="8" fill="#003d6b" />
-
-              {/* Center PromptPay Emblem */}
-              <circle cx="50" cy="50" r="13" fill="#003d6b" />
-              <path
-                d="M45 47 L50 42 L55 47 M50 43 L50 56"
-                stroke="#ffffff"
-                strokeWidth="2.5"
-                strokeLinecap="round"
-                strokeLinejoin="round"
+            {qrImage ? (
+              <img 
+                src={qrImage} 
+                alt="Bank QR Code" 
+                style={{ width: "180px", height: "180px", objectFit: "contain", display: "block" }} 
               />
+            ) : (
+              <svg
+                width="180"
+                height="180"
+                viewBox="0 0 100 100"
+                style={{ display: "block" }}
+              >
+                <rect width="100" height="100" fill="#ffffff" rx="4" />
+                <rect x="8" y="8" width="24" height="24" fill="#003d6b" rx="2" />
+                <rect x="12" y="12" width="16" height="16" fill="#ffffff" rx="1" />
+                <rect x="16" y="16" width="8" height="8" fill="#003d6b" />
 
-              <rect x="10" y="48" width="8" height="6" fill="#003d6b" />
-              <rect x="22" y="52" width="6" height="8" fill="#003d6b" />
-              <rect x="70" y="50" width="6" height="8" fill="#003d6b" />
-              <rect x="82" y="48" width="8" height="6" fill="#003d6b" />
+                <rect x="68" y="8" width="24" height="24" fill="#003d6b" rx="2" />
+                <rect x="72" y="12" width="16" height="16" fill="#ffffff" rx="1" />
+                <rect x="76" y="16" width="8" height="8" fill="#003d6b" />
 
-              <rect x="36" y="68" width="6" height="8" fill="#003d6b" />
-              <rect x="46" y="70" width="8" height="6" fill="#003d6b" />
-              <rect x="58" y="68" width="6" height="8" fill="#003d6b" />
-              <rect x="70" y="72" width="8" height="6" fill="#003d6b" />
-              <rect x="82" y="68" width="6" height="8" fill="#003d6b" />
+                <rect x="8" y="68" width="24" height="24" fill="#003d6b" rx="2" />
+                <rect x="12" y="72" width="16" height="16" fill="#ffffff" rx="1" />
+                <rect x="16" y="76" width="8" height="8" fill="#003d6b" />
 
-              <rect x="36" y="82" width="8" height="6" fill="#003d6b" />
-              <rect x="48" y="80" width="6" height="8" fill="#003d6b" />
-              <rect x="58" y="82" width="8" height="6" fill="#003d6b" />
-              <rect x="72" y="82" width="6" height="6" fill="#003d6b" />
-              <rect x="82" y="80" width="8" height="8" fill="#003d6b" />
-            </svg>
+                <rect x="36" y="10" width="6" height="6" fill="#003d6b" />
+                <rect x="46" y="14" width="8" height="4" fill="#003d6b" />
+                <rect x="58" y="10" width="6" height="6" fill="#003d6b" />
+
+                <rect x="36" y="24" width="8" height="6" fill="#003d6b" />
+                <rect x="48" y="22" width="6" height="8" fill="#003d6b" />
+                <rect x="58" y="24" width="6" height="6" fill="#003d6b" />
+
+                <rect x="10" y="36" width="6" height="8" fill="#003d6b" />
+                <rect x="22" y="40" width="6" height="6" fill="#003d6b" />
+                <rect x="32" y="36" width="8" height="8" fill="#003d6b" />
+                <rect x="44" y="38" width="12" height="6" fill="#003d6b" />
+                <rect x="60" y="36" width="6" height="8" fill="#003d6b" />
+                <rect x="72" y="40" width="8" height="6" fill="#003d6b" />
+                <rect x="84" y="36" width="6" height="8" fill="#003d6b" />
+
+                <circle cx="50" cy="50" r="13" fill="#003d6b" />
+                <path
+                  d="M45 47 L50 42 L55 47 M50 43 L50 56"
+                  stroke="#ffffff"
+                  strokeWidth="2.5"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+
+                <rect x="10" y="48" width="8" height="6" fill="#003d6b" />
+                <rect x="22" y="52" width="6" height="8" fill="#003d6b" />
+                <rect x="70" y="50" width="6" height="8" fill="#003d6b" />
+                <rect x="82" y="48" width="8" height="6" fill="#003d6b" />
+
+                <rect x="36" y="68" width="6" height="8" fill="#003d6b" />
+                <rect x="46" y="70" width="8" height="6" fill="#003d6b" />
+                <rect x="58" y="68" width="6" height="8" fill="#003d6b" />
+                <rect x="70" y="72" width="8" height="6" fill="#003d6b" />
+                <rect x="82" y="68" width="6" height="8" fill="#003d6b" />
+
+                <rect x="36" y="82" width="8" height="6" fill="#003d6b" />
+                <rect x="48" y="80" width="6" height="8" fill="#003d6b" />
+                <rect x="58" y="82" width="8" height="6" fill="#003d6b" />
+                <rect x="72" y="82" width="6" height="6" fill="#003d6b" />
+                <rect x="82" y="80" width="8" height="8" fill="#003d6b" />
+              </svg>
+            )}
           </div>
 
           {/* Amount Display */}
