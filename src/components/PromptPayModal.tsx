@@ -16,7 +16,19 @@ export default function PromptPayModal({
   onClose,
 }: PromptPayModalProps) {
   const [copied, setCopied] = useState(false);
-  const promptPayNumber = "081-234-5678"; // Default shop promptpay number
+  const [promptPayNumber, setPromptPayNumber] = useState("081-234-5678");
+
+  React.useEffect(() => {
+    fetch('/api/settings')
+      .then(res => res.json())
+      .then(data => {
+        const setting = data.find((s: any) => s.key === 'PROMPTPAY_NUMBER');
+        if (setting && setting.value) {
+          setPromptPayNumber(setting.value);
+        }
+      })
+      .catch(console.error);
+  }, []);
 
   const handleCopy = () => {
     navigator.clipboard.writeText(promptPayNumber.replace(/-/g, ""));
