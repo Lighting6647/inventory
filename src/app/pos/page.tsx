@@ -222,19 +222,10 @@ export default function POSPage() {
         <div style={{ position: 'relative' }}>
           <input
             type="text"
+            className="input"
             placeholder="🔍 ค้นหาสินค้าด้วยชื่อ หรือรหัส SKU..."
             value={searchQuery}
             onChange={e => setSearchQuery(e.target.value)}
-            style={{
-              width: '100%',
-              padding: '0.65rem 1rem',
-              borderRadius: '8px',
-              border: '1px solid #cbd5e1',
-              backgroundColor: '#ffffff',
-              fontSize: '0.9rem',
-              boxShadow: '0 1px 2px rgba(0,0,0,0.05)',
-              outline: 'none',
-            }}
           />
           {searchQuery && (
             <button
