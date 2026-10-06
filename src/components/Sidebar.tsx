@@ -8,7 +8,11 @@ import { useGSAP } from '@gsap/react';
 import styles from './Sidebar.module.css';
 import Logo from './Logo';
 
-const Sidebar = () => {
+interface SidebarProps {
+  onClose?: () => void;
+}
+
+const Sidebar: React.FC<SidebarProps> = ({ onClose }) => {
   const sidebarRef = useRef<HTMLElement>(null);
   const pathname = usePathname();
 
@@ -44,8 +48,17 @@ const Sidebar = () => {
 
   return (
     <aside ref={sidebarRef} className={styles.sidebar}>
-      <div className={styles.logo}>
+      <div className={styles.logo} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '0 1rem' }}>
         <Logo size="medium" />
+        {onClose && (
+          <button 
+            onClick={onClose}
+            style={{ color: '#b8c7ce', fontSize: '1.25rem', background: 'none', border: 'none', cursor: 'pointer', padding: '0.25rem' }}
+            aria-label="Close menu"
+          >
+            ✕
+          </button>
+        )}
       </div>
       
       <div className={`${styles.userProfile} nav-item`}>
@@ -61,6 +74,7 @@ const Sidebar = () => {
           <Link 
             key={link.path} 
             href={link.path} 
+            onClick={onClose}
             className={`${styles.navLink} nav-item ${pathname === link.path ? styles.active : ''}`}
           >
             <span className={styles.icon}>{link.icon}</span>

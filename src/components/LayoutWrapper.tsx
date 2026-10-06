@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import React, { useState } from 'react';
 import { usePathname } from 'next/navigation';
@@ -26,7 +26,7 @@ export default function LayoutWrapper({ children }: { children: React.ReactNode 
 
       {/* Sidebar Drawer */}
       <div className={isSidebarOpen ? "sidebar-container open" : "sidebar-container"}>
-        <Sidebar />
+        <Sidebar onClose={() => setIsSidebarOpen(false)} />
       </div>
 
       {/* Main Content Area */}

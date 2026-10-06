@@ -1,11 +1,15 @@
 .sidebar {
-  width: 230px;
+  width: 260px;
+  max-width: 85vw;
+  height: 100dvh;
   background-color: #222d32;
   display: flex;
   flex-direction: column;
   z-index: 10;
   color: #b8c7ce;
   overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior: contain;
 }
 
 .logo {
@@ -17,6 +21,7 @@
   justify-content: center;
   padding: 0 10px;
   color: white;
+  flex-shrink: 0;
 }
 
 .userProfile {
@@ -24,6 +29,7 @@
   display: flex;
   align-items: center;
   gap: 0.75rem;
+  flex-shrink: 0;
 }
 
 .avatar {
@@ -58,23 +64,26 @@
   flex: 1;
   display: flex;
   flex-direction: column;
+  padding-bottom: 1.5rem;
 }
 
 .navLink {
   display: flex;
   align-items: center;
   gap: 0.75rem;
-  padding: 0.75rem 1rem;
+  padding: 0.75rem 1.25rem;
+  min-height: 44px;
   color: #b8c7ce;
-  font-weight: 400;
-  font-size: 0.875rem;
-  transition: all 0.2s ease;
-  border-left: 3px solid transparent;
+  font-weight: 500;
+  font-size: 0.9rem;
+  transition: all 0.15s ease;
+  border-left: 4px solid transparent;
+  user-select: none;
 }
 
 .icon {
-  font-size: 1rem;
-  width: 20px;
+  font-size: 1.1rem;
+  width: 22px;
   text-align: center;
 }
 
@@ -83,8 +92,13 @@
   color: white;
 }
 
+.navLink:active {
+  transform: scale(0.98);
+}
+
 .navLink.active {
   background-color: #1e282c;
   color: white;
   border-left-color: #3c8dbc;
+  font-weight: 600;
 }
