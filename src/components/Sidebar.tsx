@@ -41,7 +41,8 @@ const Sidebar: React.FC<SidebarProps> = ({ onClose }) => {
     { name: 'สถานที่', path: '/locations', icon: '📍' },
     { name: 'รายงาน', path: '/reports', icon: '📊' },
     { name: 'ผู้ใช้งาน', path: '/users', icon: '👨‍💼' },
-    { name: 'SMS', path: '/sms', icon: '✉️' },
+    { name: 'โปรโมชั่น', path: '/promotions', icon: '🎟️' },
+    { name: 'LINE Notify', path: '/line-notify', icon: '🟢' },
     { name: 'ตั้งค่า', path: '/settings', icon: '⚙️' },
     { name: 'ช่วยเหลือ', path: '/help', icon: '❓' }
   ];

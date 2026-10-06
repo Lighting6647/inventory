@@ -1,8 +1,6 @@
 // This is your Prisma schema file,
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
 
-// Get a free hosted Postgres database in seconds: `npx create-db`
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -172,23 +170,62 @@ model QuotationItem {
   product     Product   @relation(fields: [productId], references: [id])
 }
 
+model Customer {
+  id          String   @id @default(cuid())
+  name        String
+  phone       String?  @unique
+  email       String?
+  points      Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  salesOrders SalesOrder[]
+}
+
+model Promotion {
+  id            String   @id @default(cuid())
+  code          String   @unique // e.g. SUMMER10
+  name          String   // e.g. ส่วนลดหน้าร้อน
+  discountType  String   // PERCENT, FIXED
+  discountValue Float
+  isActive      Boolean  @default(true)
+  startDate     DateTime?
+  endDate       DateTime?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  salesOrders   SalesOrder[]
+}
+
 model SalesOrder {
-  id           String   @id @default(cuid())
-  soNumber     String   @unique // ใช้เป็น Ticket Number / Receipt Number
-  customerName String?  // หน้าร้านอาจไม่มีชื่อลูกค้า
-  status       String   @default("COMPLETED") // PENDING, COMPLETED, CANCELLED
-  totalAmount  Float    @default(0)
-  totalCost    Float    @default(0) // ต้นทุนรวมของบิลนี้ เพื่อคิดกำไร
+  id            String   @id @default(cuid())
+  soNumber      String   @unique // ใช้เป็น Ticket Number / Receipt Number
+  customerName  String?  // หน้าร้านอาจไม่มีชื่อลูกค้า (Legacy)
+  
+  customerId    String?
+  customer      Customer? @relation(fields: [customerId], references: [id])
+
+  status        String   @default("COMPLETED") // PENDING, COMPLETED, CANCELLED
+  totalAmount   Float    @default(0)
+  totalCost     Float    @default(0) // ต้นทุนรวมของบิลนี้ เพื่อคิดกำไร
+  
+  // Promotion & Discounts
+  promotionId   String?
+  promotion     Promotion? @relation(fields: [promotionId], references: [id])
+  discountAmount Float   @default(0)
+  pointsEarned  Int      @default(0)
+  pointsUsed    Int      @default(0)
+  
   paymentMethod String  @default("CASH") // CASH, TRANSFER, CREDIT
-  cashTendered Float    @default(0) // รับเงินมา
-  change       Float    @default(0) // เงินทอน
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
+  cashTendered  Float    @default(0) // รับเงินมา
+  change        Float    @default(0) // เงินทอน
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
 
-  quotationId  String?
-  quotation    Quotation? @relation(fields: [quotationId], references: [id])
+  quotationId   String?
+  quotation     Quotation? @relation(fields: [quotationId], references: [id])
 
-  items        SalesOrderItem[]
+  items         SalesOrderItem[]
 }
 
 model SalesOrderItem {
@@ -202,6 +239,7 @@ model SalesOrderItem {
   productId   String
   product     Product    @relation(fields: [productId], references: [id])
 }
+
 model Expense {
   id          String   @id @default(cuid())
   title       String
@@ -225,12 +263,4 @@ model Setting {
   key         String   @unique
   value       String
   updatedAt   DateTime @updatedAt
-}
-
-model SmsLog {
-  id          String   @id @default(cuid())
-  phoneNumber String
-  message     String
-  status      String   @default("SENT")
-  createdAt   DateTime @default(now())
 }
