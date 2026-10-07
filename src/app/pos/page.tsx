@@ -96,7 +96,7 @@ export default function POSPage() {
     if (p) {
       addToCart(p);
     } else {
-      alert(`เน€เธยเน€เธเธเน€เธยเน€เธยเน€เธยเน€เธเธเน€เธเธ”เน€เธยเน€เธยเน€เธยเน€เธเธ’เน€เธโ€”เน€เธเธ•เน€เธยเน€เธเธเน€เธเธ•เน€เธยเน€เธเธ’เน€เธเธเน€เธยเน€เธยเน€เธยเน€เธยเน€เธโ€: ${barcode}`);
+      alert(`ไม่พบสินค้าที่มีบาร์โค้ด: ${barcode}`);
     }
   };
 
@@ -183,17 +183,14 @@ export default function POSPage() {
         // Reset
         setCart([]);
         setCashTendered(0);
-        setSelectedCustomerId('');
-          setAppliedPromo(null);
-          setPromoCodeInput('');
-          setUsePoints(0);
+        setCustomerName('');
 
         // Refresh products stock
         const updatedProds = await fetch('/api/inventory').then(r => r.json());
         setProducts(updatedProds);
       } else {
         const err = await res.json();
-        alert('เน€เธโฌเน€เธยเน€เธเธ”เน€เธโ€เน€เธยเน€เธยเน€เธเธเน€เธยเน€เธเธ”เน€เธโ€เน€เธยเน€เธเธ…เน€เธเธ’เน€เธโ€เน€เธยเน€เธยเน€เธยเน€เธเธ’เน€เธเธเน€เธยเน€เธเธ’เน€เธเธ: ' + (err.error || 'Server error'));
+        alert('เกิดข้อผิดพลาดในการขาย: ' + (err.error || 'Server error'));
       }
     } catch (e: any) {
       alert('Error: ' + e.message);
@@ -228,10 +225,10 @@ export default function POSPage() {
         <header style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '1rem' }}>
           <div>
             <h1 style={{ fontSize: '1.5rem', fontWeight: 800, color: 'var(--text-primary)', display: 'flex', alignItems: 'center', gap: '10px' }}>
-              <span style={{ fontSize: '1.8rem' }}>เนยยโ€</span> POS เน€เธยเน€เธเธเน€เธโ€เน€เธยเน€เธเธ’เน€เธเธเน€เธเธเน€เธยเน€เธยเน€เธเธ’เน€เธเธเน€เธยเน€เธเธ’เน€เธย (Cashier)
+              <span style={{ fontSize: '1.8rem' }}>🛒</span> POS จุดขายหน้าร้าน (Cashier)
             </h1>
             <p style={{ fontSize: '0.875rem', color: 'var(--text-secondary)', margin: 0, marginTop: '0.25rem' }}>
-              เน€เธเธเน€เธเธเน€เธยเน€เธยเน€เธยเน€เธเธ”เน€เธโ€เน€เธโฌเน€เธยเน€เธเธ”เน€เธยเน€เธเธเน€เธเธเน€เธโ€เน€เธโฌเน€เธเธเน€เธยเน€เธเธ เน€เธเธเน€เธเธเน€เธยเน€เธเธเน€เธเธ‘เน€เธยเน€เธเธเน€เธยเน€เธยเน€เธยเน€เธยเน€เธเธ’เน€เธเธเน€เธยเน€เธยเน€เธยเน€เธยเน€เธโ€ เน€เธยเน€เธเธ…เน€เธเธเน€เธยเน€เธเธ”เน€เธเธเน€เธยเน€เธยเน€เธยเน€เธยเน€เธโฌเน€เธเธเน€เธเธเน€เธยเน€เธย
+              ระบบคิดเงินรวดเร็ว รองรับสแกนบาร์โค้ด และพิมพ์ใบเสร็จ
             </p>
           </div>
           <div style={{ display: 'flex', gap: '0.75rem' }}>
@@ -240,14 +237,14 @@ export default function POSPage() {
               onClick={openCustomerDisplay}
               style={{ display: 'flex', alignItems: 'center', gap: '8px' }}
             >
-              เนยโ€เธ เน€เธโฌเน€เธยเน€เธเธ”เน€เธโ€เน€เธเธเน€เธยเน€เธยเน€เธเธ’เน€เธยเน€เธเธเน€เธเธ…เน€เธเธเน€เธยเน€เธยเน€เธยเน€เธเธ’
+              📺 เปิดหน้าจอลูกค้า
             </button>
             <button 
               className="btn btn-primary" 
               onClick={() => setIsScannerOpen(true)}
               style={{ display: 'flex', alignItems: 'center', gap: '8px' }}
             >
-              เนยโ€เธ— เน€เธเธเน€เธยเน€เธยเน€เธยเน€เธยเน€เธเธ’เน€เธเธเน€เธยเน€เธยเน€เธยเน€เธยเน€เธโ€
+              📷 สแกนบาร์โค้ด
             </button>
           </div>
         </header>
@@ -263,13 +260,13 @@ export default function POSPage() {
               setUsePoints(0);
             }}
           >
-            <option value="">-- เน€เธโฌเน€เธเธ…เน€เธเธ—เน€เธเธเน€เธยเน€เธเธ…เน€เธเธเน€เธยเน€เธยเน€เธยเน€เธเธ’ (เน€เธยเน€เธเธเน€เธยเน€เธยเน€เธเธ‘เน€เธยเน€เธยเน€เธเธ‘เน€เธย) --</option>
-            {customers.map(c => <option key={c.id} value={c.id}>{c.name} (เน€เธยเน€เธโ€ขเน€เธยเน€เธเธ: {c.points})</option>)}
+            <option value="">-- เลือกลูกค้า (ไม่บังคับ) --</option>
+            {customers.map(c => <option key={c.id} value={c.id}>{c.name} (แต้ม: {c.points})</option>)}
           </select>
 
           {selectedCustomerId && customers.find(c=>c.id===selectedCustomerId)?.points > 0 && (
             <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '0.5rem', fontSize: '0.8rem' }}>
-              <span>เน€เธยเน€เธยเน€เธยเน€เธยเน€เธโ€ขเน€เธยเน€เธเธเน€เธเธ…เน€เธโ€เน€เธเธเน€เธเธ’เน€เธยเน€เธเธ’ (เน€เธเธเน€เธเธ• {customers.find(c=>c.id===selectedCustomerId)?.points} เน€เธยเน€เธโ€ขเน€เธยเน€เธเธ):</span>
+              <span>ใช้แต้มลดราคา (มี {customers.find(c=>c.id===selectedCustomerId)?.points} แต้ม):</span>
               <input 
                 type="number" 
                 max={customers.find(c=>c.id===selectedCustomerId)?.points} 
@@ -284,7 +281,7 @@ export default function POSPage() {
           <div style={{ display: 'flex', gap: '8px', marginBottom: '0.75rem' }}>
             <input 
               type="text" 
-              placeholder="เน€เธยเน€เธยเน€เธยเน€เธโ€เน€เธเธเน€เธยเน€เธเธเน€เธยเน€เธเธ…เน€เธโ€..." 
+              placeholder="โค้ดส่วนลด..." 
               value={promoCodeInput}
               onChange={e => setPromoCodeInput(e.target.value.toUpperCase())}
               style={{ flex: 1, padding: '0.5rem', borderRadius: '6px', border: '1px solid var(--border)', fontSize: '0.8rem' }}
@@ -293,20 +290,20 @@ export default function POSPage() {
               onClick={() => {
                 const promo = promotions.find(p => p.code === promoCodeInput && p.isActive);
                 if(promo) setAppliedPromo(promo);
-                else alert('เน€เธยเน€เธเธเน€เธยเน€เธยเน€เธยเน€เธยเน€เธยเน€เธยเน€เธโ€เน€เธยเน€เธเธ•เน€เธย เน€เธเธเน€เธเธเน€เธเธ—เน€เธเธเน€เธยเน€เธยเน€เธยเน€เธโ€เน€เธเธเน€เธเธเน€เธโ€เน€เธเธเน€เธเธ’เน€เธเธเน€เธเธเน€เธยเน€เธเธ…เน€เธยเน€เธเธ');
+                else alert('ไม่พบโค้ดนี้ หรือโค้ดหมดอายุแล้ว');
               }}
               style={{ padding: '0.5rem 1rem', background: 'var(--primary)', color: 'white', borderRadius: '6px', fontSize: '0.8rem', border: 'none', cursor: 'pointer' }}
             >
-              เน€เธยเน€เธยเน€เธยเน€เธยเน€เธยเน€เธยเน€เธโ€
+              ใช้โค้ด
             </button>
           </div>
           
           {/* Payment Method Selector */}
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '4px', marginBottom: '0.6rem' }}>
             {[
-              { id: 'CASH', label: 'เนยโ€เธ• เน€เธโฌเน€เธยเน€เธเธ”เน€เธยเน€เธเธเน€เธโ€' },
-              { id: 'TRANSFER', label: 'เนยโ€เธ‘ QR เน€เธยเน€เธเธเน€เธย' },
-              { id: 'CREDIT', label: 'เนยโ€เธ“ เน€เธยเน€เธเธ‘เน€เธโ€ขเน€เธเธ' },
+              { id: 'CASH', label: '💵 เงินสด' },
+              { id: 'TRANSFER', label: '📱 QR โอน' },
+              { id: 'CREDIT', label: '💳 บัตร' },
             ].map(m => (
               <button
                 key={m.id}
@@ -333,11 +330,11 @@ export default function POSPage() {
             <div style={{ marginBottom: '0.6rem' }}>
               <div style={{ display: 'flex', gap: '4px', marginBottom: '4px' }}>
                 {[
-                  { label: 'เน€เธยเน€เธเธเน€เธโ€เน€เธเธ•', val: total },
-                  { label: 'เน€เธเธ50', val: 50 },
-                  { label: 'เน€เธเธ100', val: 100 },
-                  { label: 'เน€เธเธ500', val: 500 },
-                  { label: 'เน€เธเธ1,000', val: 1000 },
+                  { label: 'พอดี', val: total },
+                  { label: '฿50', val: 50 },
+                  { label: '฿100', val: 100 },
+                  { label: '฿500', val: 500 },
+                  { label: '฿1,000', val: 1000 },
                 ].map(preset => (
                   <button
                     key={preset.label}
@@ -361,7 +358,7 @@ export default function POSPage() {
               </div>
               <input 
                 type="number" 
-                placeholder="เน€เธยเน€เธเธ“เน€เธยเน€เธเธเน€เธยเน€เธโฌเน€เธยเน€เธเธ”เน€เธยเน€เธโ€”เน€เธเธ•เน€เธยเน€เธเธเน€เธเธ‘เน€เธยเน€เธเธเน€เธเธ’ (เน€เธเธ)..." 
+                placeholder="จำนวนเงินที่รับมา (฿)..." 
                 value={cashTendered || ''} 
                 onChange={e => setCashTendered(Number(e.target.value))}
                 style={{ 
@@ -377,8 +374,8 @@ export default function POSPage() {
               />
               {cashTendered >= total && total > 0 && (
                 <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '4px', padding: '4px 8px', backgroundColor: '#ecfdf5', borderRadius: '4px', color: '#059669', fontSize: '0.8rem', fontWeight: 700 }}>
-                  <span>เน€เธโฌเน€เธยเน€เธเธ”เน€เธยเน€เธโ€”เน€เธเธเน€เธย:</span>
-                  <span>เน€เธเธ{(cashTendered - total).toLocaleString('en-US', { minimumFractionDigits: 2 })}</span>
+                  <span>เงินทอน:</span>
+                  <span>฿{(cashTendered - total).toLocaleString('en-US', { minimumFractionDigits: 2 })}</span>
                 </div>
               )}
             </div>
@@ -402,7 +399,7 @@ export default function POSPage() {
             disabled={cart.length === 0 || loading || (paymentMethod === 'CASH' && cashTendered < total)}
             onClick={handleCheckoutClick}
           >
-            {loading ? 'เน€เธยเน€เธเธ“เน€เธเธ…เน€เธเธ‘เน€เธยเน€เธยเน€เธเธ‘เน€เธยเน€เธโ€”เน€เธเธ–เน€เธย...' : paymentMethod === 'TRANSFER' ? 'เนยโ€เธ‘ เน€เธเธเน€เธเธเน€เธยเน€เธเธ’เน€เธย QR PromptPay' : 'เนยโ€ เน€เธยเน€เธเธ“เน€เธเธเน€เธเธเน€เธโฌเน€เธยเน€เธเธ”เน€เธย & เน€เธเธเน€เธเธเน€เธยเน€เธยเน€เธยเน€เธโฌเน€เธเธเน€เธเธเน€เธยเน€เธย'}
+            {loading ? 'กำลังบันทึก...' : paymentMethod === 'TRANSFER' ? '📱 สร้าง QR PromptPay' : '✓ ชำระเงิน & ออกใบเสร็จ'}
           </button>
         </div>
       </div>
