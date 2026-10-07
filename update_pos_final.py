@@ -1,4 +1,6 @@
+import sys
 
+content = """
 "use client";
 
 import React, { useState, useEffect, useRef } from 'react';
@@ -603,3 +605,7 @@ export default function POSPage() {
     </div>
   );
 }
+"""
+
+with open('src/app/pos/page.tsx', 'w', encoding='utf-8') as f:
+    f.write(content)
