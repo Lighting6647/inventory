@@ -1,6 +1,7 @@
-﻿import type { Metadata } from 'next';
+import type { Metadata } from 'next';
 import './globals.css';
 import LayoutWrapper from '@/components/LayoutWrapper';
+import KeepAlive from '@/components/KeepAlive';
 
 export const metadata: Metadata = {
   title: 'DPOS - Inventory & POS System',
@@ -15,6 +16,7 @@ export default function RootLayout({
   return (
     <html lang="th">
       <body style={{ margin: 0, padding: 0, fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif' }}>
+        <KeepAlive />
         <LayoutWrapper>{children}</LayoutWrapper>
       </body>
     </html>
