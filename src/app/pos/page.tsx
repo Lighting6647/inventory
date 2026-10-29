@@ -90,9 +90,9 @@ export default function POSPage() {
   // -----------------------------
 
   useEffect(() => {
-    fetch('/api/inventory').then(r => r.json()).then(setProducts).catch(console.error);
-    fetch('/api/customers').then(r => r.json()).then(setCustomers).catch(()=>console.log('Customer fetch err'));
-    fetch('/api/promotions').then(r => r.json()).then(setPromotions).catch(()=>console.log('Promo fetch err'));
+    fetch('/api/inventory').then(r => r.json()).then(d => Array.isArray(d) && setProducts(d)).catch(console.error);
+    fetch('/api/customers').then(r => r.json()).then(d => Array.isArray(d) && setCustomers(d)).catch(()=>console.log('Customer fetch err'));
+    fetch('/api/promotions').then(r => r.json()).then(d => Array.isArray(d) && setPromotions(d)).catch(()=>console.log('Promo fetch err'));
   }, []);
 
   useGSAP(() => {
@@ -234,7 +234,7 @@ export default function POSPage() {
 
         // Refresh products stock
         const updatedProds = await fetch('/api/inventory').then(r => r.json());
-        setProducts(updatedProds);
+        if (Array.isArray(updatedProds)) setProducts(updatedProds);
       } else {
         const err = await res.json();
         alert('เกิดข้อผิดพลาดในการขาย: ' + (err.error || 'Server error'));
@@ -326,41 +326,49 @@ export default function POSPage() {
               key={p.id} 
               onClick={() => addToCart(p)}
               style={{ 
-                backgroundColor: 'white', 
-                borderRadius: '8px', 
-                padding: '1rem', 
+                backgroundColor: 'rgba(17, 24, 39, 0.65)', 
+                backdropFilter: 'blur(20px)',
+                WebkitBackdropFilter: 'blur(20px)',
+                borderRadius: '16px', 
+                padding: '1.15rem', 
                 cursor: 'pointer',
-                border: '1px solid var(--border)',
-                boxShadow: 'var(--shadow-sm)',
-                transition: 'all 0.2s',
+                border: '1px solid rgba(255, 255, 255, 0.1)',
+                boxShadow: '0 8px 24px rgba(0, 0, 0, 0.45)',
+                transition: 'all 0.2s cubic-bezier(0.16, 1, 0.3, 1)',
                 display: 'flex',
                 flexDirection: 'column',
                 justifyContent: 'space-between',
                 position: 'relative',
                 overflow: 'hidden'
               }}
-              onMouseEnter={(e) => e.currentTarget.style.transform = 'translateY(-3px)'}
-              onMouseLeave={(e) => e.currentTarget.style.transform = 'translateY(0)'}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.transform = 'translateY(-3px)';
+                e.currentTarget.style.borderColor = 'rgba(56, 189, 248, 0.4)';
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.transform = 'translateY(0)';
+                e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.1)';
+              }}
             >
               {p.currentStock <= p.minStockLevel && (
-                <div style={{ position: 'absolute', top: 0, right: 0, backgroundColor: 'var(--danger)', color: 'white', fontSize: '0.65rem', padding: '2px 8px', borderBottomLeftRadius: '8px', fontWeight: 700 }}>
+                <div style={{ position: 'absolute', top: 0, right: 0, backgroundColor: 'rgba(244, 63, 94, 0.25)', borderLeft: '1px solid rgba(244, 63, 94, 0.4)', borderBottom: '1px solid rgba(244, 63, 94, 0.4)', color: '#fda4af', fontSize: '0.65rem', padding: '3px 8px', borderBottomLeftRadius: '10px', fontWeight: 700 }}>
                   ใกล้หมด
                 </div>
               )}
               
               <div>
-                <div style={{ fontSize: '0.75rem', color: 'var(--text-tertiary)', marginBottom: '4px' }}>{p.sku}</div>
-                <h3 style={{ fontSize: '0.95rem', fontWeight: 600, color: 'var(--text-primary)', margin: '0 0 8px 0', lineHeight: 1.3 }}>{p.name}</h3>
+                <div style={{ fontSize: '0.75rem', color: '#64748b', marginBottom: '4px' }}>{p.sku}</div>
+                <h3 style={{ fontSize: '0.95rem', fontWeight: 600, color: '#ffffff', margin: '0 0 8px 0', lineHeight: 1.3 }}>{p.name}</h3>
               </div>
               
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginTop: '8px' }}>
-                <span style={{ fontSize: '0.75rem', color: 'var(--text-secondary)' }}>คงเหลือ {p.currentStock}</span>
-                <span style={{ fontSize: '1.1rem', fontWeight: 800, color: 'var(--primary)' }}>฿{Number(p.price).toLocaleString()}</span>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginTop: '10px' }}>
+                <span style={{ fontSize: '0.75rem', color: '#94a3b8' }}>คงเหลือ {p.currentStock}</span>
+                <span style={{ fontSize: '1.15rem', fontWeight: 800, color: '#38bdf8' }}>฿{Number(p.price).toLocaleString()}</span>
               </div>
             </div>
           ))}
           {filteredProducts.length === 0 && (
-            <div style={{ gridColumn: '1 / -1', textAlign: 'center', padding: '3rem', color: 'var(--text-tertiary)' }}>
+            <div style={{ gridColumn: '1 / -1', textAlign: 'center', padding: '3rem', color: '#64748b' }}>
               ไม่มีสินค้าที่ค้นหา
             </div>
           )}
@@ -375,11 +383,11 @@ export default function POSPage() {
         margin: 0,
         padding: '1.25rem'
       }}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem', paddingBottom: '0.75rem', borderBottom: '2px dashed var(--border)' }}>
-          <h2 style={{ fontSize: '1.2rem', fontWeight: 800, color: 'var(--text-primary)', margin: 0 }}>ตะกร้าสินค้า</h2>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem', paddingBottom: '0.75rem', borderBottom: '1px dashed rgba(255, 255, 255, 0.12)' }}>
+          <h2 style={{ fontSize: '1.15rem', fontWeight: 800, color: '#ffffff', margin: 0 }}>ตะกร้าสินค้า (Cart)</h2>
           <button 
             onClick={clearCart}
-            style={{ background: 'none', border: 'none', color: 'var(--danger)', fontSize: '0.85rem', cursor: 'pointer', fontWeight: 600 }}
+            style={{ background: 'none', border: 'none', color: '#fda4af', fontSize: '0.8rem', cursor: 'pointer', fontWeight: 600 }}
           >
             ล้างทั้งหมด
           </button>
@@ -388,42 +396,42 @@ export default function POSPage() {
         {/* Cart Items */}
         <div style={{ flex: 1, overflowY: 'auto', marginBottom: '1rem', paddingRight: '0.5rem' }}>
           {cart.length === 0 ? (
-            <div style={{ height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--text-tertiary)', fontSize: '0.9rem' }}>
+            <div style={{ height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#64748b', fontSize: '0.875rem' }}>
               ยังไม่มีสินค้าในตะกร้า
             </div>
           ) : (
             cart.map(item => (
-              <div key={item.id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.75rem', paddingBottom: '0.75rem', borderBottom: '1px solid var(--border)' }}>
+              <div key={item.id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.75rem', paddingBottom: '0.75rem', borderBottom: '1px solid rgba(255, 255, 255, 0.06)' }}>
                 <div style={{ flex: 1, paddingRight: '10px' }}>
-                  <div style={{ fontSize: '0.85rem', fontWeight: 600, color: 'var(--text-primary)', marginBottom: '4px', lineHeight: 1.2 }}>{item.name}</div>
-                  <div style={{ fontSize: '0.75rem', color: 'var(--text-secondary)' }}>฿{Number(item.price).toLocaleString()} / {item.unit}</div>
+                  <div style={{ fontSize: '0.85rem', fontWeight: 600, color: '#ffffff', marginBottom: '2px', lineHeight: 1.2 }}>{item.name}</div>
+                  <div style={{ fontSize: '0.75rem', color: '#94a3b8' }}>฿{Number(item.price).toLocaleString()} / {item.unit}</div>
                 </div>
                 
-                <div style={{ display: 'flex', alignItems: 'center', gap: '6px', margin: '0 10px' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '6px', margin: '0 8px' }}>
                   <button 
                     onClick={() => updateQty(item.id, -1)}
-                    style={{ width: '22px', height: '22px', borderRadius: '4px', border: '1px solid var(--border)', background: '#fff', cursor: 'pointer', fontWeight: 700, display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+                    style={{ width: '24px', height: '24px', borderRadius: '6px', border: '1px solid rgba(255, 255, 255, 0.15)', background: 'rgba(255, 255, 255, 0.06)', color: '#ffffff', cursor: 'pointer', fontWeight: 700, display: 'flex', alignItems: 'center', justifyContent: 'center' }}
                   >
                     -
                   </button>
-                  <span style={{ fontSize: '0.85rem', fontWeight: 700, minWidth: '20px', textAlign: 'center' }}>
+                  <span style={{ fontSize: '0.85rem', fontWeight: 700, minWidth: '22px', textAlign: 'center', color: '#ffffff' }}>
                     {item.qty}
                   </span>
                   <button 
                     onClick={() => updateQty(item.id, 1)}
-                    style={{ width: '22px', height: '22px', borderRadius: '4px', border: '1px solid var(--border)', background: '#fff', cursor: 'pointer', fontWeight: 700, display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+                    style={{ width: '24px', height: '24px', borderRadius: '6px', border: '1px solid rgba(255, 255, 255, 0.15)', background: 'rgba(255, 255, 255, 0.06)', color: '#ffffff', cursor: 'pointer', fontWeight: 700, display: 'flex', alignItems: 'center', justifyContent: 'center' }}
                   >
                     +
                   </button>
                 </div>
 
-                <div style={{ fontWeight: 700, fontSize: '0.9rem', color: 'var(--text-primary)', minWidth: '55px', textAlign: 'right' }}>
+                <div style={{ fontWeight: 700, fontSize: '0.9rem', color: '#38bdf8', minWidth: '60px', textAlign: 'right' }}>
                   ฿{(Number(item.price) * item.qty).toLocaleString()}
                 </div>
 
                 <button 
                   onClick={() => removeFromCart(item.id)}
-                  style={{ background: 'none', border: 'none', color: 'var(--text-tertiary)', cursor: 'pointer', padding: '0 4px', fontSize: '0.85rem' }}
+                  style={{ background: 'none', border: 'none', color: '#64748b', cursor: 'pointer', padding: '0 4px', fontSize: '0.85rem', marginLeft: '6px' }}
                   title="ลบรายการ"
                 >
                   ✕
@@ -434,11 +442,11 @@ export default function POSPage() {
         </div>
 
         {/* Total & Checkout Section */}
-        <div style={{ marginTop: '0.75rem', paddingTop: '0.75rem', borderTop: '2px dashed var(--border)' }}>
+        <div style={{ marginTop: '0.75rem', paddingTop: '0.75rem', borderTop: '1px dashed rgba(255, 255, 255, 0.12)' }}>
           
           <select 
             className="input" 
-            style={{ marginBottom: '0.5rem', fontSize: '0.8rem', width: '100%', padding: '0.5rem', borderRadius: '6px' }}
+            style={{ marginBottom: '0.5rem', fontSize: '0.8rem', width: '100%', padding: '0.5rem', borderRadius: '8px' }}
             value={selectedCustomerId}
             onChange={(e) => {
               setSelectedCustomerId(e.target.value);
@@ -446,11 +454,11 @@ export default function POSPage() {
             }}
           >
             <option value="">-- เลือกลูกค้า (ไม่บังคับ) --</option>
-            {customers.map(c => <option key={c.id} value={c.id}>{c.name} (แต้ม: {c.points})</option>)}
+            {customers.map(c => <option key={c.id} value={c.id} style={{ background: '#0a0f1d' }}>{c.name} (แต้ม: {c.points})</option>)}
           </select>
 
           {selectedCustomerId && customers.find(c=>c.id===selectedCustomerId)?.points > 0 && (
-            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '0.5rem', fontSize: '0.8rem' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '0.5rem', fontSize: '0.8rem', color: '#94a3b8' }}>
               <span>ใช้แต้มลดราคา (มี {customers.find(c=>c.id===selectedCustomerId)?.points} แต้ม):</span>
               <input 
                 type="number" 
@@ -458,7 +466,7 @@ export default function POSPage() {
                 min={0}
                 value={usePoints || ''}
                 onChange={e => setUsePoints(Math.min(Number(e.target.value), customers.find(c=>c.id===selectedCustomerId)?.points || 0))}
-                style={{ width: '80px', padding: '0.2rem', borderRadius: '4px', border: '1px solid var(--border)' }}
+                style={{ width: '80px', padding: '0.3rem', borderRadius: '6px', border: '1px solid rgba(255, 255, 255, 0.15)', background: 'rgba(30, 41, 59, 0.5)', color: '#ffffff' }}
               />
             </div>
           )}
@@ -469,7 +477,8 @@ export default function POSPage() {
               placeholder="โค้ดส่วนลด..." 
               value={promoCodeInput}
               onChange={e => setPromoCodeInput(e.target.value.toUpperCase())}
-              style={{ flex: 1, padding: '0.5rem', borderRadius: '6px', border: '1px solid var(--border)', fontSize: '0.8rem' }}
+              className="input"
+              style={{ flex: 1, padding: '0.5rem', borderRadius: '8px', fontSize: '0.8rem' }}
             />
             <button 
               onClick={() => {
@@ -477,33 +486,34 @@ export default function POSPage() {
                 if(promo) setAppliedPromo(promo);
                 else alert('ไม่พบโค้ดนี้ หรือโค้ดหมดอายุแล้ว');
               }}
-              style={{ padding: '0.5rem 1rem', background: 'var(--primary)', color: 'white', borderRadius: '6px', fontSize: '0.8rem', border: 'none', cursor: 'pointer' }}
+              className="btn btn-secondary"
+              style={{ padding: '0.5rem 0.9rem', fontSize: '0.8rem' }}
             >
               ใช้โค้ด
             </button>
           </div>
 
           <div style={{ marginBottom: '0.75rem' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.85rem', color: 'var(--text-secondary)' }}>
-              <span>ยอดรวม:</span>
+            <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.85rem', color: '#94a3b8' }}>
+              <span>ยอดรวม (Subtotal):</span>
               <span>฿{subtotal.toLocaleString('en-US', { minimumFractionDigits: 2 })}</span>
             </div>
             {(discountAmount > 0 || pointsDiscount > 0) && (
-              <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.85rem', color: 'var(--danger)' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.85rem', color: '#fda4af' }}>
                 <span>ส่วนลด:</span>
                 <span>-฿{(discountAmount + pointsDiscount).toLocaleString('en-US', { minimumFractionDigits: 2 })}</span>
               </div>
             )}
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginTop: '0.5rem', borderTop: '1px solid var(--border)', paddingTop: '0.5rem' }}>
-              <span style={{ fontSize: '1rem', fontWeight: 600, color: 'var(--text-primary)' }}>ยอดสุทธิ:</span>
-              <span style={{ fontSize: '1.6rem', fontWeight: 900, color: 'var(--primary)', fontFamily: 'monospace' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginTop: '0.5rem', borderTop: '1px solid rgba(255, 255, 255, 0.1)', paddingTop: '0.5rem' }}>
+              <span style={{ fontSize: '0.95rem', fontWeight: 600, color: '#ffffff' }}>ยอดสุทธิ:</span>
+              <span style={{ fontSize: '1.6rem', fontWeight: 900, color: '#38bdf8', fontFamily: 'monospace', textShadow: '0 0 12px rgba(56, 189, 248, 0.35)' }}>
                 ฿{total.toLocaleString('en-US', { minimumFractionDigits: 2 })}
               </span>
             </div>
           </div>
           
           {/* Payment Method Selector */}
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '4px', marginBottom: '0.6rem' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '6px', marginBottom: '0.75rem' }}>
             {[
               { id: 'CASH', label: '💵 เงินสด' },
               { id: 'TRANSFER', label: '📱 QR โอน' },
@@ -514,14 +524,16 @@ export default function POSPage() {
                 type="button"
                 onClick={() => setPaymentMethod(m.id as any)}
                 style={{
-                  padding: '0.45rem 0.2rem',
+                  padding: '0.55rem 0.2rem',
                   fontSize: '0.75rem',
-                  fontWeight: 600,
-                  borderRadius: '6px',
-                  border: paymentMethod === m.id ? '2px solid var(--primary)' : '1px solid var(--border)',
-                  backgroundColor: paymentMethod === m.id ? 'var(--primary)' : '#f8fafc',
-                  color: paymentMethod === m.id ? 'white' : 'var(--text-secondary)',
-                  cursor: 'pointer'
+                  fontWeight: 700,
+                  borderRadius: '8px',
+                  border: paymentMethod === m.id ? '1px solid #38bdf8' : '1px solid rgba(255, 255, 255, 0.1)',
+                  backgroundColor: paymentMethod === m.id ? 'rgba(56, 189, 248, 0.2)' : 'rgba(30, 41, 59, 0.5)',
+                  color: paymentMethod === m.id ? '#38bdf8' : '#94a3b8',
+                  boxShadow: paymentMethod === m.id ? '0 0 12px rgba(56, 189, 248, 0.25)' : 'none',
+                  cursor: 'pointer',
+                  transition: 'all 0.15s ease'
                 }}
               >
                 {m.label}
@@ -531,8 +543,8 @@ export default function POSPage() {
 
           {/* Cash Quick Presets */}
           {paymentMethod === 'CASH' && (
-            <div style={{ marginBottom: '0.6rem' }}>
-              <div style={{ display: 'flex', gap: '4px', marginBottom: '4px' }}>
+            <div style={{ marginBottom: '0.75rem' }}>
+              <div style={{ display: 'flex', gap: '4px', marginBottom: '6px' }}>
                 {[
                   { label: 'พอดี', val: total },
                   { label: '฿50', val: 50 },
@@ -546,13 +558,13 @@ export default function POSPage() {
                     onClick={() => setCashTendered(preset.val)}
                     style={{
                       flex: 1,
-                      padding: '3px 0',
+                      padding: '4px 0',
                       fontSize: '0.7rem',
                       fontWeight: 600,
-                      borderRadius: '4px',
-                      border: '1px solid var(--border)',
-                      backgroundColor: '#f1f5f9',
-                      color: 'var(--text-primary)',
+                      borderRadius: '6px',
+                      border: '1px solid rgba(255, 255, 255, 0.1)',
+                      backgroundColor: 'rgba(255, 255, 255, 0.05)',
+                      color: '#ffffff',
                       cursor: 'pointer'
                     }}
                   >
@@ -565,19 +577,18 @@ export default function POSPage() {
                 placeholder="จำนวนเงินที่รับมา (฿)..." 
                 value={cashTendered || ''} 
                 onChange={e => setCashTendered(Number(e.target.value))}
+                className="input"
                 style={{ 
                   width: '100%', 
-                  padding: '0.5rem 0.75rem', 
-                  borderRadius: '6px', 
-                  border: '1px solid var(--border)', 
+                  padding: '0.55rem 0.85rem', 
+                  borderRadius: '8px', 
                   fontSize: '0.85rem',
                   fontWeight: 600,
-                  fontFamily: 'monospace',
-                  outline: 'none'
+                  fontFamily: 'monospace'
                 }}
               />
               {cashTendered >= total && total > 0 && (
-                <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '4px', padding: '4px 8px', backgroundColor: '#ecfdf5', borderRadius: '4px', color: '#059669', fontSize: '0.8rem', fontWeight: 700 }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '6px', padding: '6px 10px', backgroundColor: 'rgba(16, 185, 129, 0.15)', border: '1px solid rgba(16, 185, 129, 0.3)', borderRadius: '6px', color: '#34d399', fontSize: '0.8rem', fontWeight: 700 }}>
                   <span>เงินทอน:</span>
                   <span>฿{(cashTendered - total).toLocaleString('en-US', { minimumFractionDigits: 2 })}</span>
                 </div>
@@ -590,15 +601,15 @@ export default function POSPage() {
             style={{ 
               width: '100%', 
               padding: '0.85rem', 
-              fontSize: '1rem',
+              fontSize: '0.95rem',
               fontWeight: 800,
-              borderRadius: '8px',
+              borderRadius: '10px',
               border: 'none',
-              backgroundColor: cart.length === 0 || loading || (paymentMethod === 'CASH' && cashTendered < total) ? '#94a3b8' : 'var(--primary)',
-              color: 'white',
+              backgroundColor: cart.length === 0 || loading || (paymentMethod === 'CASH' && cashTendered < total) ? 'rgba(255, 255, 255, 0.1)' : '#38bdf8',
+              color: cart.length === 0 || loading || (paymentMethod === 'CASH' && cashTendered < total) ? '#64748b' : '#04101e',
               cursor: cart.length === 0 || loading || (paymentMethod === 'CASH' && cashTendered < total) ? 'not-allowed' : 'pointer',
-              boxShadow: 'var(--shadow-md)',
-              transition: 'all 0.15s',
+              boxShadow: cart.length > 0 && (paymentMethod !== 'CASH' || cashTendered >= total) ? '0 4px 18px rgba(56, 189, 248, 0.4)' : 'none',
+              transition: 'all 0.18s ease',
             }}
             disabled={cart.length === 0 || loading || (paymentMethod === 'CASH' && cashTendered < total)}
             onClick={handleCheckoutClick}

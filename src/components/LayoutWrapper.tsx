@@ -15,7 +15,7 @@ export default function LayoutWrapper({ children }: { children: React.ReactNode 
   }
 
   return (
-    <div className="layout-container" style={{ display: 'flex', minHeight: '100vh', backgroundColor: '#f4f6f9', position: 'relative' }}>
+    <div className="layout-container" style={{ display: 'flex', minHeight: '100vh', backgroundColor: 'transparent', position: 'relative' }}>
       {/* Backdrop for mobile */}
       {isSidebarOpen && (
         <div 
@@ -32,7 +32,7 @@ export default function LayoutWrapper({ children }: { children: React.ReactNode 
       {/* Main Content Area */}
       <div style={{ flex: 1, display: 'flex', flexDirection: 'column', minWidth: 0, width: '100%' }}>
         <Topbar onToggleSidebar={() => setIsSidebarOpen(!isSidebarOpen)} />
-        <main style={{ flex: 1, padding: '1rem', overflowX: 'auto' }}>
+        <main style={{ flex: 1, padding: '1.25rem', overflowX: 'auto' }}>
           {children}
         </main>
       </div>

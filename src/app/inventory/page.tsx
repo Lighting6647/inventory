@@ -31,7 +31,7 @@ export default function InventoryPage() {
     try {
       const res = await fetch('/api/inventory');
       const data = await res.json();
-      setProducts(data);
+      if (Array.isArray(data)) setProducts(data);
     } catch (error) {
       console.error('Error fetching inventory', error);
     } finally {

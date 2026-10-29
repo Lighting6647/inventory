@@ -10,58 +10,38 @@ interface TopbarProps {
 
 export default function Topbar({ onToggleSidebar }: TopbarProps) {
   return (
-    <header 
-      className={styles.topbar} 
-      style={{ 
-        padding: '0 1rem', 
-        display: 'flex', 
-        alignItems: 'center', 
-        justifyContent: 'space-between', 
-        backgroundColor: '#1e3a5f', 
-        borderBottom: '1px solid rgba(255, 255, 255, 0.08)', 
-        color: 'white', 
-        height: '56px' 
-      }}
-    >
-      <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+    <header className={styles.topbar}>
+      <div className={styles.leftSection}>
         <button 
           onClick={onToggleSidebar} 
-          style={{ 
-            background: 'none', 
-            border: 'none', 
-            color: 'white', 
-            fontSize: '1.25rem', 
-            cursor: 'pointer', 
-            padding: '0.25rem 0.5rem', 
-            display: 'flex', 
-            alignItems: 'center' 
-          }}
+          className={styles.menuBtn}
           aria-label="Toggle menu"
         >
-          ☰
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <line x1="3" y1="12" x2="21" y2="12" />
+            <line x1="3" y1="6" x2="21" y2="6" />
+            <line x1="3" y1="18" x2="21" y2="18" />
+          </svg>
         </button>
         <Logo size="small" />
       </div>
 
-      <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-        <div style={{ fontSize: '0.875rem', fontWeight: 500 }}>Admin</div>
-        <div 
-          className={styles.avatar} 
-          style={{ 
-            backgroundColor: '#0f172a', 
-            width: '34px', 
-            height: '34px',
-            borderRadius: '50%',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            fontWeight: 700,
-            border: '1px solid rgba(255, 255, 255, 0.2)'
-          }}
-        >
-          A
+      <div className={styles.actions}>
+        <div className={styles.statusIndicator}>
+          <span className={styles.statusDot}></span>
+          <span>Online Ready</span>
+        </div>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+          <div style={{ textAlign: 'right', display: 'flex', flexDirection: 'column' }}>
+            <span style={{ fontSize: '0.85rem', fontWeight: 600, color: '#ffffff' }}>Admin Executive</span>
+            <span style={{ fontSize: '0.7rem', color: '#94a3b8' }}>DPOS Boutique</span>
+          </div>
+          <div className={styles.avatar} title="Admin Profile">
+            A
+          </div>
         </div>
       </div>
     </header>
   );
 }
+

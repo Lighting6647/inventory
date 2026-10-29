@@ -21,7 +21,7 @@ export default function PromotionsPage() {
     try {
       const res = await fetch('/api/promotions');
       const data = await res.json();
-      setPromotions(data);
+      if (Array.isArray(data)) setPromotions(data);
     } catch(err) {
       console.error(err);
     } finally {

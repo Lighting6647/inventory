@@ -1,4 +1,4 @@
-﻿const puppeteer = require('puppeteer');
+const puppeteer = require('puppeteer');
 const { PuppeteerScreenRecorder } = require('puppeteer-screen-recorder');
 
 (async () => {
@@ -14,7 +14,7 @@ const { PuppeteerScreenRecorder } = require('puppeteer-screen-recorder');
   });
 
   const recorder = new PuppeteerScreenRecorder(page, { followNewTab: false, fps: 30, videoFrame: { width: 390, height: 844 } });
-  const savePath = 'D:/All Ai/IOS,Asset/public/demo.mp4';
+  const savePath = 'D:/Light/IOS,Asset Light/public/demo.mp4';
   
   await recorder.start(savePath);
 

@@ -4,8 +4,8 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "next build",
-    "start": "next start",
+    "build": "prisma generate && prisma db push && next build --webpack",
+    "start": "prisma db push && next start",
     "lint": "eslint"
   },
   "dependencies": {
@@ -17,8 +17,6 @@
     "html5-qrcode": "^2.3.8",
     "next": "^16.3.6",
     "papaparse": "^5.7.0",
-    "puppeteer": "^19.0.0",
-    "puppeteer-screen-recorder": "^3.0.6",
     "react": "19.2.4",
     "react-dom": "19.2.4"
   },

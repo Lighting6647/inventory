@@ -28,7 +28,7 @@ export default function InboundPage() {
   const [newProduct, setNewProduct] = useState({ name: '', sku: '', barcode: '', cost: 0, price: 0, currentStock: 0, categoryName: '' });
 
   useEffect(() => {
-    fetch('/api/categories').then(r => r.json()).then(setCategories).catch(console.error);
+    fetch('/api/categories').then(r => r.json()).then(d => Array.isArray(d) && setCategories(d)).catch(console.error);
   }, []);
 
   useGSAP(() => {
@@ -113,7 +113,7 @@ export default function InboundPage() {
       if (res.ok) {
         setIsAddOpen(false);
         setNewProduct({ name: '', sku: '', barcode: '', cost: 0, price: 0, currentStock: 0, categoryName: '' });
-        fetch('/api/categories').then(r => r.json()).then(setCategories).catch(console.error);
+        fetch('/api/categories').then(r => r.json()).then(d => Array.isArray(d) && setCategories(d)).catch(console.error);
         alert('Product created successfully');
       } else {
         const err = await res.json();
